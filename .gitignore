@@ -1,2 +1,11 @@
 micasense
 env-Agro
+*.pyc
+*.log
+*.pth
+*.txt
+**/__pycache__
+**/data
+**GUI_.py
+**pyinstall_linux.py
+**pyinstall_win.py
