@@ -10,3 +10,4 @@ env-Agro
 **pyinstall_linux.py
 **pyinstall_win.py
 **/panel_detection/__pycache__
+**panel_kmeans.py

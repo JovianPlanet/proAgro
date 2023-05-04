@@ -2,7 +2,7 @@ import sys
 import cv2
 import os, glob
 import numpy as np
-from .utils import blur, erosion
+from .utils import blur, erosion, get_shape, get_intensity
 
 '''
 Funcion que retorna las coordenadas del panel
@@ -16,11 +16,6 @@ def get_red650_panel(image):
     areas = []
     #for image in imageName[:]:
     img = cv2.imread(image)
-
-    # outliers = ['36_3']#, '01_3']
-    # for outlier in outliers:
-    #     if outlier in image:
-    #         img = cv2.morphologyEx(img, cv2.MORPH_CLOSE, np.ones((3, 3), np.uint8), iterations=2)
 
     if '01_3' in image:
         img = cv2.morphologyEx(img, cv2.MORPH_OPEN, np.ones((7, 7), np.uint8), iterations=2)
@@ -61,22 +56,10 @@ def get_red650_panel(image):
 
             epsilon = 0.08 * perimeter
             approx = cv2.approxPolyDP(contour, epsilon, True)
-            #print(approx)
 
-            # Create blank image
-            blank_image = np.zeros(gray.shape, np.uint8)
+            intensity = get_intensity(n, approx)
 
-            # Draw contour in the mask
-            cv2.drawContours(blank_image, [approx], -1, (255, 255, 255), -1)
-
-            # Create a mask to select pixels inside the figure
-            mask_contour = blank_image == 255
-
-            # Calculate the intensity from the grayscale image
-            # filtering out the pixels where in the blank_image their value is not 255
-            intensity = np.mean(n[mask_contour])
-
-            d_points = len(approx)
+            shape = get_shape(approx)
 
             # if '01_3' in image:
             #     print(f'{image[-15:]}:\n')
@@ -86,7 +69,7 @@ def get_red650_panel(image):
             #     cv2.waitKey(0)
 
 
-            if intensity < 160 and intensity > 130 and d_points == 4 and perimeter < 900: # Para BLUE 3 
+            if intensity < 160 and intensity > 130 and shape == 'square' and perimeter < 900: # Para BLUE 3 
 
                 areas.append(area)
 
@@ -97,7 +80,7 @@ def get_red650_panel(image):
                 # cv2.waitKey(0)
 
                 print(f'Area = {area:.3f}, perimetro = {perimeter:.3f}, Num points = {len(contour)} intensidad {intensity:.3f}')
-                print(f'Area panel (aproximado) = {cv2.contourArea(approx)}, Puntos que lo definen = {d_points}')
+                print(f'Area panel (aproximado) = {cv2.contourArea(approx)}, Forma = {shape}')
                 print(f'Las coordenadas del panel son: \n\n{approx}\n')
 
                 # cv2.imshow("Panel segmentado", blank_image)
