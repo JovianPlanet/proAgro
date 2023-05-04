@@ -17,24 +17,22 @@ def get_red650_panel(image):
     #for image in imageName[:]:
     img = cv2.imread(image)
 
-    if '01_3' in image:
-        img = cv2.morphologyEx(img, cv2.MORPH_OPEN, np.ones((7, 7), np.uint8), iterations=2)
-    elif '07_3' in image:
-        img = cv2.morphologyEx(img, cv2.MORPH_CLOSE, np.ones((3, 3), np.uint8), iterations=2)
-    elif '36_3' in image:
-        img = cv2.morphologyEx(img, cv2.MORPH_CLOSE, np.ones((3, 3), np.uint8), iterations=2)
-    elif '54_3' in image:
-        img = cv2.morphologyEx(img, cv2.MORPH_OPEN, np.ones((7, 7), np.uint8), iterations=4)
+    # if '01_3' in image:
+    #     img = cv2.morphologyEx(img, cv2.MORPH_OPEN, np.ones((7, 7), np.uint8), iterations=2)
+    # elif '07_3' in image:
+    #     img = cv2.morphologyEx(img, cv2.MORPH_CLOSE, np.ones((3, 3), np.uint8), iterations=2)
+    # elif '36_3' in image:
+    #     img = cv2.morphologyEx(img, cv2.MORPH_CLOSE, np.ones((3, 3), np.uint8), iterations=2)
+    # elif '54_3' in image:
+    #     img = cv2.morphologyEx(img, cv2.MORPH_OPEN, np.ones((7, 7), np.uint8), iterations=4)
 
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    #imgray = gray.copy()
+    imgray = gray.copy()
 
     blurred = blur(gray, canny=False)
 
-    #blurred = cv2.morphologyEx(blurred, cv2.MORPH_CLOSE, np.ones((3, 3), np.uint8))
-
     ret, thresh = cv2.threshold(blurred, 127, 255, 0)
-    #thresh = cv2.adaptiveThreshold(blurred,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY,15,2)
+    #ret, thresh = cv2.threshold(blurred, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
     eroded = erosion(thresh)
     # if '54_3' in image:
     #     cv2.imshow('Eroded', thresh)
@@ -42,7 +40,6 @@ def get_red650_panel(image):
 
     contours, hierarchy = cv2.findContours(eroded, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-    i = 0
     for contour in contours:
 
         area = cv2.contourArea(contour)
@@ -79,16 +76,17 @@ def get_red650_panel(image):
                 # cv2.imshow(f'Imagen {image[-15:]}', n)
                 # cv2.waitKey(0)
 
-                print(f'Area = {area:.3f}, perimetro = {perimeter:.3f}, Num points = {len(contour)} intensidad {intensity:.3f}')
-                print(f'Area panel (aproximado) = {cv2.contourArea(approx)}, Forma = {shape}')
-                print(f'Las coordenadas del panel son: \n\n{approx}\n')
+                # print(f'Area = {area:.3f}, perimetro = {perimeter:.3f}, Num points = {len(contour)} intensidad {intensity:.3f}')
+                # print(f'Area panel (aproximado) = {cv2.contourArea(approx)}, Forma = {shape}')
+                # print(f'Las coordenadas del panel son: \n\n{approx}\n')
 
                 # cv2.imshow("Panel segmentado", blank_image)
                 # cv2.waitKey(0)
 
-            i += 1
-    areas = np.array(areas)
-    print(f'Numero de paneles = {areas.shape}')
-    print(f'Area promedio: {np.mean(areas)}, area min = {np.min(areas)}, area max = {np.max(areas)}\n')
+                return True
 
-    return approx
+    # areas = np.array(areas)
+    # print(f'Numero de paneles = {areas.shape}')
+    # print(f'Area promedio: {np.mean(areas)}, area min = {np.min(areas)}, area max = {np.max(areas)}\n')
+
+    return False #approx

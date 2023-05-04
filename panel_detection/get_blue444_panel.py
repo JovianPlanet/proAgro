@@ -12,21 +12,11 @@ Band name: Blue-444
 
 def get_blue444_panel(image):
 
-    areas = []
     img = cv2.imread(image)
 
-    if '03_1' in image:
-        pass
-        # img = cv2.morphologyEx(img, cv2.MORPH_CLOSE, np.ones((3, 3), np.uint8), iterations=3)
-        # img = cv2.morphologyEx(img, cv2.MORPH_OPEN, np.ones((7, 7), np.uint8), iterations=15)
-        # img = cv2.erode(img, np.ones((3, 3), np.uint8), iterations=6)
-    elif '29_1' in image:
-        img = img*3
-        #img = cv2.morphologyEx(img, cv2.MORPH_CLOSE, np.ones((3, 3), np.uint8), iterations=2)
-    # elif '36_3' in image:
-    #     img = cv2.morphologyEx(img, cv2.MORPH_CLOSE, np.ones((3, 3), np.uint8), iterations=2)
-    # elif '54_3' in image:
-    #     img = cv2.morphologyEx(img, cv2.MORPH_OPEN, np.ones((7, 7), np.uint8), iterations=4)
+    # if '29_1' in image:
+    #     img = img*3
+    #     #img = cv2.morphologyEx(img, cv2.MORPH_CLOSE, np.ones((3, 3), np.uint8), iterations=2)
 
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     imgray = gray.copy()
@@ -37,9 +27,9 @@ def get_blue444_panel(image):
     ret, thresh = cv2.threshold(blurred, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
     #thresh = cv2.adaptiveThreshold(blurred,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY,15,2)
     eroded = erosion(thresh)
-    if '29_1' in image:
-        cv2.imshow(f'Imagen eroded: {image[-15:]}', eroded)
-        cv2.waitKey(0)
+    # if '29_1' in image:
+    #     cv2.imshow(f'Imagen eroded: {image[-15:]}', eroded)
+    #     cv2.waitKey(0)
 
     contours, hierarchy = cv2.findContours(eroded, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
@@ -62,17 +52,15 @@ def get_blue444_panel(image):
 
             shape = get_shape(approx)
 
-            if '29_1' in image:
-                print(f'{image[-15:]}:\n')
-                print(f'area = {area:.3f}, perimetro = {perimeter:.3f}, Forma = {shape}, intensidad {intensity:.3f}\n')
-                cv2.drawContours(n, contour, -1, (0, 255 - i*50, 0), 3)
-                cv2.imshow(f'Imagen {image[-15:]}', n)
-                cv2.waitKey(0)
+            # if '29_1' in image:
+            #     print(f'{image[-15:]}:\n')
+            #     print(f'area = {area:.3f}, perimetro = {perimeter:.3f}, Forma = {shape}, intensidad {intensity:.3f}\n')
+            #     cv2.drawContours(n, contour, -1, (0, 255 - i*50, 0), 3)
+            #     cv2.imshow(f'Imagen {image[-15:]}', n)
+            #     cv2.waitKey(0)
 
 
             if intensity < 145 and intensity > 110 and shape == 'square' and perimeter < 900: # Para BLUE 3 
-
-                areas.append(area)
 
                 print(f'***La imagen {image[-15:]} contiene panel***\n')
 
@@ -89,10 +77,7 @@ def get_blue444_panel(image):
                 # cv2.imshow("Panel segmentado", temp)
                 # cv2.waitKey(0)
 
-                return approx, intensity 
-    #areas = np.array(areas)
-    #print(f'Numero de paneles = {areas.shape}')
-    #print(f'Area promedio: {np.mean(areas)}, area min = {np.min(areas)}, area max = {np.max(areas)}\n')
+                return True #approx, intensity 
 
-    return None#approx
+    return False #None
     

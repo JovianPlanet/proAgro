@@ -54,3 +54,24 @@ def plot_outliers(im):
     cv2.imshow(f'Imagen {image[-15:]}', im)
     cv2.waitKey(0)
 
+
+'''
+find the corners in the image
+'''
+#gray = np.float32(gray)
+#dst = cv2.cornerHarris(gray, 2, 3, 0.04)
+#result is dilated for marking the corners, not important
+#dst = cv2.dilate(dst,None)
+# Threshold for an optimal value, it may vary depending on the image.
+#img[dst>0.01*dst.max()]=[0,0,255]
+# cv2.imshow('dst',img)
+# if cv2.waitKey(0) & 0xff == 27:
+#     cv2.destroyAllWindows()
+
+
+
+# corners = cv2.goodFeaturesToTrack(canny,4,0.5,50)
+
+# for corner in corners:
+#     x,y = corner.ravel()
+#     cv2.circle(image,(x,y),5,(36,255,12),-1)
