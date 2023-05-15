@@ -50,9 +50,74 @@ def get_intensity(img, region):
 
     return intensity
 
-def plot_outliers(im):
-    cv2.imshow(f'Imagen {image[-15:]}', im)
-    cv2.waitKey(0)
+def bin_img(gray, th_type='std', th_val=127):
+
+    blurred = blur(gray, canny=False)
+
+    ret, thresh = [], []
+    if th_type == 'std':
+        ret, thresh = cv2.threshold(blurred, th_val, 255, 0)
+    elif th_type == 'otsu':
+        ret, thresh = cv2.threshold(blurred, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    elif th_type == 'adapt':
+        thresh = cv2.adaptiveThreshold(blurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 15, 2)
+
+    eroded = erosion(thresh)
+
+    return eroded
+
+def process_contours(n, contours, i_lo, i_hi):
+
+    for contour in contours:
+
+        area = cv2.contourArea(contour)
+        perimeter = cv2.arcLength(contour, True)
+        
+        if area > 15000 and len(contour) < 1000 and perimeter < 900:
+
+            # cv2.drawContours(n, contour, -1, (0, 255 - 50, 0), 3)
+            # cv2.imshow(f'process cotours {"image[-15:]"}', n)
+            # cv2.waitKey(0)
+
+            cv2.destroyAllWindows()
+
+            epsilon = 0.09 * perimeter
+            approx = cv2.approxPolyDP(contour, epsilon, True)
+
+            intensity = get_intensity(n, approx)
+
+            shape = get_shape(approx)
+
+            if i_lo < intensity < i_hi and shape == 'square':
+
+                # Graficar el contorno
+                # cv2.drawContours(n, contour, -1, (0, 255 - 50, 0), 3)
+                # cv2.imshow(f'Imagen', n)
+                # cv2.waitKey(0)
+
+                # Graficar el panel segmentado (binarizado)
+                # temp = np.zeros(n.shape, np.uint8)
+                # cv2.drawContours(temp, [approx], -1, (255, 255, 255), -1)
+                # cv2.imshow("Panel segmentado", temp)
+                # cv2.waitKey(0)
+
+                return True #approx, intensity 
+
+    return None
+
+
+def bin_cluster(img, centers):
+
+    for center in centers:
+        # select color and create mask
+        #print(center)
+        layer = img.copy()
+        mask = cv2.inRange(layer, center, center)
+
+        # apply mask to layer 
+        layer[mask == 0] = [0]#,0,0]
+        cv2.imshow('layer', layer)
+        cv2.waitKey(0)
 
 
 '''

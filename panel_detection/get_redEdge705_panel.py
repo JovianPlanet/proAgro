@@ -36,7 +36,7 @@ def get_redEdge705_panel(image):
         area = cv2.contourArea(contour)
         perimeter = cv2.arcLength(contour, True)
         
-        if area > 15000 and len(contour) < 1000:
+        if area > 15000 and len(contour) < 1000 and perimeter < 900:
 
             n = img.copy()
 
@@ -56,7 +56,7 @@ def get_redEdge705_panel(image):
             # cv2.waitKey(0)
 
 
-            if intensity < 155 and intensity > 120 and shape == 'square' and perimeter < 900: # Para BLUE 3 
+            if 120 < intensity < 155 and shape == 'square':#if intensity < 155 and intensity > 120 and shape == 'square': # Para BLUE 3 
 
                 print(f'***La imagen {image[-15:]} contiene panel***\n')
 
@@ -64,11 +64,11 @@ def get_redEdge705_panel(image):
                 # cv2.imshow(f'Imagen {image[-15:]}', n)
                 # cv2.waitKey(0)
 
-                print(f'Area = {area:.3f}, perimetro = {perimeter:.3f}, Num points = {len(contour)} intensidad {intensity:.3f}')
-                print(f'Area panel (aproximado) = {cv2.contourArea(approx)}, Forma = {shape}')
-                print(f'Las coordenadas del panel son: \n\n{approx}\n')
+                # print(f'Area = {area:.3f}, perimetro = {perimeter:.3f}, Num points = {len(contour)} intensidad {intensity:.3f}')
+                # print(f'Area panel (aproximado) = {cv2.contourArea(approx)}, Forma = {shape}')
+                # print(f'Las coordenadas del panel son: \n\n{approx}\n')
 
-                temp = np.zeros(n.shape, np.uint8)
+                # temp = np.zeros(n.shape, np.uint8)
                 # cv2.drawContours(temp, [approx], -1, (255, 255, 255), -1)
                 # cv2.imshow("Panel segmentado", temp)
                 # cv2.waitKey(0)

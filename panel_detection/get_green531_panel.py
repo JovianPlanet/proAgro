@@ -40,7 +40,7 @@ def get_green531_panel(image):
         area = cv2.contourArea(contour)
         perimeter = cv2.arcLength(contour, True)
         
-        if area > 15000 and len(contour) < 1000:
+        if area > 15000 and len(contour) < 1000 and perimeter < 900:
 
             n = img.copy()
 
@@ -60,7 +60,7 @@ def get_green531_panel(image):
             # cv2.waitKey(0)
 
 
-            if intensity < 155 and intensity > 120 and shape == 'square' and perimeter < 900: # Para BLUE 3 
+            if 120 < intensity < 155 and shape == 'square': 
 
                 print(f'***La imagen {image[-15:]} contiene panel***\n')
 

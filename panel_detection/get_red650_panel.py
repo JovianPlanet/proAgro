@@ -45,7 +45,7 @@ def get_red650_panel(image):
         area = cv2.contourArea(contour)
         perimeter = cv2.arcLength(contour, True)
         
-        if area > 15000 and len(contour) < 1000:
+        if area > 15000 and len(contour) < 1000 and perimeter < 900:
 
             n = img.copy()
 
@@ -66,7 +66,7 @@ def get_red650_panel(image):
             #     cv2.waitKey(0)
 
 
-            if intensity < 160 and intensity > 130 and shape == 'square' and perimeter < 900: # Para BLUE 3 
+            if 130 < intensity < 160 and shape == 'square': 
 
                 areas.append(area)
 
