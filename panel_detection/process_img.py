@@ -5,7 +5,7 @@ import numpy as np
 from .utils import blur, erosion, get_shape, get_intensity, bin_img, process_contours, bin_cluster
 
 
-def find_clusters(img, K=5, i_lo=120, i_hi=140):
+def find_clusters(img, K=5, i_lo=120, i_hi=140, name=''):
 
     imgray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
@@ -33,6 +33,9 @@ def find_clusters(img, K=5, i_lo=120, i_hi=140):
 
         i=0
 
+        # if '07_4' in name:
+        #     print(f'{k=}')
+
         for r in np.unique(labels)[1:]:
 
             labels_ = np.where(labels==r, r, 0)
@@ -46,12 +49,14 @@ def find_clusters(img, K=5, i_lo=120, i_hi=140):
 
             eroded = bin_img(a*imgray, 'otsu')
 
-            contours, hierarchy = cv2.findContours(a*imgray, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            #contours = None
 
-            c = process_contours(img, contours, i_lo, i_hi)
+            contours, hierarchy = cv2.findContours(a*imgray, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_TC89_L1) # CHAIN_APPROX_SIMPLE #RETR_TREE 
+
+            c = process_contours(img, contours, i_lo, i_hi, name)
 
             if c is not None:
-                print(f'k={k}')
+                #print(f'k={k}')
                 return True
 
             # cv2.imshow(f'{"path[-15:]"}, r={r}', a*imgray)#thresh*img)
@@ -74,19 +79,22 @@ def get_panels(path, th_type='std', th_val=127, i_lo=120, i_hi=140, K=5):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     
     eroded = bin_img(gray, th_type, th_val)
+    # if '07_4' in path:
+    #     cv2.imshow(f'process cotours {path[-15:]}', eroded)
+    #     cv2.waitKey(0)
 
-    contours, hierarchy = cv2.findContours(eroded, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    contours, hierarchy = cv2.findContours(eroded, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE) #  CHAIN_APPROX_TC89_L1
 
-    c = process_contours(img, contours, i_lo=i_lo, i_hi=i_hi)
+    c = process_contours(img, contours, i_lo=i_lo, i_hi=i_hi, name=path[-15:])
 
     if c:
-        print(f'***La imagen {path[-15:]} contiene panel***\n')
+        #print(f'***La imagen {path[-15:]} contiene panel***\n')
         return True
 
-    c = find_clusters(img_, K, i_lo=i_lo, i_hi=i_hi)
+    c = find_clusters(img_, K, i_lo=i_lo, i_hi=i_hi, name=path[-15:])
 
     if c:
-        print(f'***La imagen {path[-15:]} contiene panel (kmeans)***\n')
+        #print(f'***La imagen {path[-15:]} contiene panel (kmeans)***\n')
         return True
 
     else:

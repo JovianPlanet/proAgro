@@ -5,8 +5,17 @@ import numpy as np
 
 from panel_detection.process_img import get_panels
 
+red_in = ['IMG_0001', 'IMG_0003', 'IMG_0005', 'IMG_0008', 'IMG_0010', 'IMG_0012', 'IMG_0014', 'IMG_0017', 'IMG_0019', 'IMG_0021',\
+          'IMG_0024', 'IMG_0026', 'IMG_0029', 'IMG_0031', 'IMG_0033', 'IMG_0035', 'IMG_0037', 'IMG_0039', 'IMG_0041', 'IMG_0043',\
+          'IMG_0045', 'IMG_0047', 'IMG_0049', 'IMG_0051', 'IMG_0053', 'IMG_0055', 'IMG_0057', 'IMG_0058', 'IMG_0016', 'IMG_0000',\
+          'IMG_0007', 'IMG_0023']
+
+blue_in = ['IMG_0001', 'IMG_0003', 'IMG_0005', 'IMG_0007', 'IMG_0009', 'IMG_0011', 'IMG_0013', 'IMG_0016', 'IMG_0018', 'IMG_0020',\
+           'IMG_0022', 'IMG_0024', 'IMG_0027', 'IMG_0029', 'IMG_0032', 'IMG_0034', 'IMG_0036', 'IMG_0038', 'IMG_0040', 'IMG_0042',\
+           'IMG_0044', 'IMG_0046', 'IMG_0048', 'IMG_0050', 'IMG_0052', 'IMG_0054', 'IMG_0056', 'IMG_0057', 'IMG_0015', 'IMG_0000'] 
+
+
 imagePath = '/media/davidjm/Disco_Compartido/david/datasets/ProyectoAgro/AGUACATE23noviembre/BLUE/000'
-imageName = glob.glob(os.path.join(imagePath,'IMG_00**_2.tif'))#[0]#IMG_0038_3
 
 #get_panels(os.path.join(imagePath,'IMG_0036_3.tif'), th_type='std', th_val=127, i_lo=120, i_hi=160)
 
@@ -18,30 +27,56 @@ K = 10
 
 print(f'\nConfiguracion:\nUmbral:{th_type}, Valor umbral {th_val}, i low: {i_lo}, i hi: {i_hi}, K: {K}\n')
 
-panels = {'Blue444': [], 'Green531': [], 'Red650': [], 'RedEdge705': [], 'RedEdge740': []}
-keys = list(panels.keys())
+panels_blue = {'Blue444': [], 'Green531': [], 'Red650': [], 'RedEdge705': [], 'RedEdge740': []}
+keys = list(panels_blue.keys())
 
+print(f'\n*** Buscando paneles (BLUE)***\n')
 for i in range(1, 6):
     imageName = glob.glob(os.path.join(imagePath, f'IMG_00**_{i}.tif'))
-    print(f'\n*** Buscando paneles para la banda {keys[i-1]} sufijo {i}***\n')
 
     for image in imageName:
-        panels[keys[i-1]].append(get_panels(image, 
-                                         th_type=th_type, 
-                                         th_val=th_val, 
-                                         i_lo=i_lo, 
-                                         i_hi=i_hi, 
-                                         K=K)
-        )
-    print(f'Num panels en la banda {keys[i-1]}, sufijo ({i}) = {sum(panels[keys[i-1]])}')
+        if image[-14:-6] in blue_in:
+            panels_blue[keys[i-1]].append(get_panels(image, 
+                                             th_type=th_type, 
+                                             th_val=th_val, 
+                                             i_lo=i_lo, 
+                                             i_hi=i_hi, 
+                                             K=K)
+            )
+
+    print(f'Num panels en la banda {keys[i-1]}, sufijo ({i}) = {sum(panels_blue[keys[i-1]])}')
+
+# for suf, key in enumerate(keys):
+
+#     print(f'Num panels {key} ({suf+1}) = {sum(panels_blue[key])}')
 
 
-print(f'\nNum panels blue 444 (1) = {sum(panels["Blue444"])}')
-print(f'Num panels green 531 (2) = {sum(panels["Green531"])}')
-print(f'Num panels red 650 (3) = {sum(panels["Red650"])}')
-print(f'Num panels Red edge 705 (4) = {sum(panels["RedEdge705"])}')
-print(f'Num panels Red edge 740 (5) = {sum(panels["RedEdge740"])}')
+imagePath = '/media/davidjm/Disco_Compartido/david/datasets/ProyectoAgro/AGUACATE23noviembre/RED/000'
 
+panels_red = {'Blue': [], 'Green': [], 'Red': [], 'NIR': [], 'RedEdge': []}
+keys = list(panels_red.keys())
+
+print(f'\n*** Buscando paneles (RED)***\n')
+for i in range(1, 6):
+    imageName = glob.glob(os.path.join(imagePath, f'IMG_00**_{i}.tif'))
+
+    redins = 0
+    for image in imageName:
+        if image[-14:-6] in red_in:
+            panels_red[keys[i-1]].append(get_panels(image, 
+                                             th_type=th_type, 
+                                             th_val=th_val, 
+                                             i_lo=i_lo, 
+                                             i_hi=i_hi, 
+                                             K=K)
+            )
+
+        
+    print(f'Num panels en la banda {keys[i-1]}, sufijo ({i}) = {sum(panels_red[keys[i-1]])}')
+
+# for suf, key in enumerate(keys):
+
+#     print(f'Num panels {key} ({suf+1}) = {sum(panels_red[key])}')
 
 '''
 1: th_type='otsu', i_lo=110, i_hi=145
@@ -54,3 +89,4 @@ print(f'Num panels Red edge 740 (5) = {sum(panels["RedEdge740"])}')
 '''
 exiftool IMG_0007_5.tif | grep Band
 '''
+

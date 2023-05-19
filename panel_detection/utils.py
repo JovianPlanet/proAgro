@@ -66,18 +66,26 @@ def bin_img(gray, th_type='std', th_val=127):
 
     return eroded
 
-def process_contours(n, contours, i_lo, i_hi):
+def process_contours(n, contours, i_lo, i_hi, name=''):
 
     for contour in contours:
 
         area = cv2.contourArea(contour)
         perimeter = cv2.arcLength(contour, True)
+        # if 'RED' and '07_4' in name:
+        #     if 5000 < area < 50000:
+        #         #print(f'\n\n {area=}, {perimeter=}\n\n')
+        #         cv2.drawContours(n, contour, -1, (0, 255 - 50, 0), 3)
+        #         cv2.imshow(f'process cotours {name}', n)
+        #         cv2.waitKey(0)
         
         if area > 15000 and len(contour) < 1000 and perimeter < 900:
 
-            # cv2.drawContours(n, contour, -1, (0, 255 - 50, 0), 3)
-            # cv2.imshow(f'process cotours {"image[-15:]"}', n)
-            # cv2.waitKey(0)
+            # if '07_4' in name:
+
+            #     cv2.drawContours(n, contour, -1, (0, 255 - 50, 0), 3)
+            #     cv2.imshow(f'process cotours {name}', n)
+            #     cv2.waitKey(0)
 
             cv2.destroyAllWindows()
 
@@ -88,7 +96,7 @@ def process_contours(n, contours, i_lo, i_hi):
 
             shape = get_shape(approx)
 
-            if i_lo < intensity < i_hi and shape == 'square':
+            if shape == 'square': #i_lo < intensity < i_hi and shape == 'square':
 
                 # Graficar el contorno
                 # cv2.drawContours(n, contour, -1, (0, 255 - 50, 0), 3)
