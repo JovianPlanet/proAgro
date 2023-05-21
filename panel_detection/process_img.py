@@ -9,8 +9,6 @@ def find_clusters(img, K=5, i_lo=120, i_hi=140, name=''):
 
     imgray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-    # img_convert = img.copy() #defining image to experiment with number of clusters
-
     vectorized = imgray.reshape((-1, 1))
     vectorized = np.float32(vectorized)
 
@@ -26,8 +24,6 @@ def find_clusters(img, K=5, i_lo=120, i_hi=140, name=''):
 
         newimage = centers[labels.flatten()]
         newimage = newimage.reshape(imgray.shape)
-
-        #bin_cluster(img, centers)
 
         cv2.destroyAllWindows()
 
@@ -56,11 +52,7 @@ def find_clusters(img, K=5, i_lo=120, i_hi=140, name=''):
             c = process_contours(img, contours, i_lo, i_hi, name)
 
             if c is not None:
-                #print(f'k={k}')
                 return True
-
-            # cv2.imshow(f'{"path[-15:]"}, r={r}', a*imgray)#thresh*img)
-            # cv2.waitKey(0)
 
 
 def get_panels(path, th_type='std', th_val=127, i_lo=120, i_hi=140, K=5):

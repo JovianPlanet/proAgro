@@ -46,6 +46,7 @@ for i in range(1, 6):
 
     print(f'Num panels en la banda {keys[i-1]}, sufijo ({i}) = {sum(panels_blue[keys[i-1]])}')
 
+print(f'\nTotal BLUE = {sum([sum(panels_blue[key]) for key in keys])}')
 # for suf, key in enumerate(keys):
 
 #     print(f'Num panels {key} ({suf+1}) = {sum(panels_blue[key])}')
@@ -73,6 +74,9 @@ for i in range(1, 6):
 
         
     print(f'Num panels en la banda {keys[i-1]}, sufijo ({i}) = {sum(panels_red[keys[i-1]])}')
+
+print(f'\nTotal RED = {sum([sum(panels_red[key]) for key in keys])}')
+
 
 # for suf, key in enumerate(keys):
 

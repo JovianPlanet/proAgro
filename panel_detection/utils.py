@@ -113,6 +113,13 @@ def process_contours(n, contours, i_lo, i_hi, name=''):
 
     return None
 
+def morph(img, kernel, mode='open'):
+    if mode is 'open':
+        m = cv2.morphologyEx(img, cv2.MORPH_OPEN, kernel)
+    elif mode is 'close':
+        m = cv2.morphologyEx(img, cv2.MORPH_OPEN, kernel)
+
+    return m
 
 def bin_cluster(img, centers):
 
