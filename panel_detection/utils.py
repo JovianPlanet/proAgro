@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import csv
 
 def blur(img, canny=True):
     filtered = cv2.GaussianBlur(img, (3, 3), 0)
@@ -52,13 +53,17 @@ def get_intensity(img, region):
 
 def bin_img(gray, th_type='std', th_val=127):
 
+    # Performs Gaussian blur + threshold
+
     blurred = blur(gray, canny=False)
 
     ret, thresh = [], []
     if th_type == 'std':
         ret, thresh = cv2.threshold(blurred, th_val, 255, 0)
+
     elif th_type == 'otsu':
         ret, thresh = cv2.threshold(blurred, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+
     elif th_type == 'adapt':
         thresh = cv2.adaptiveThreshold(blurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 15, 2)
 
@@ -66,26 +71,14 @@ def bin_img(gray, th_type='std', th_val=127):
 
     return eroded
 
-def process_contours(n, contours, i_lo, i_hi, name=''):
+def process_contours(n, contours, name='', i_hi=165, nums=[]):
 
     for contour in contours:
 
         area = cv2.contourArea(contour)
         perimeter = cv2.arcLength(contour, True)
-        # if 'RED' and '07_4' in name:
-        #     if 5000 < area < 50000:
-        #         #print(f'\n\n {area=}, {perimeter=}\n\n')
-        #         cv2.drawContours(n, contour, -1, (0, 255 - 50, 0), 3)
-        #         cv2.imshow(f'process cotours {name}', n)
-        #         cv2.waitKey(0)
         
-        if area > 15000 and len(contour) < 1000 and perimeter < 900:
-
-            # if '07_4' in name:
-
-            #     cv2.drawContours(n, contour, -1, (0, 255 - 50, 0), 3)
-            #     cv2.imshow(f'process cotours {name}', n)
-            #     cv2.waitKey(0)
+        if area > 18000 and len(contour) < 1000 and perimeter < 900:
 
             cv2.destroyAllWindows()
 
@@ -96,17 +89,31 @@ def process_contours(n, contours, i_lo, i_hi, name=''):
 
             shape = get_shape(approx)
 
-            if shape == 'square': #i_lo < intensity < i_hi and shape == 'square':
+            if shape == 'square' and intensity < i_hi: #i_lo < intensity < i_hi and shape == 'square':
+
+                if name[7:-4] in nums:
+                    pass
+                    print(f'Area {name} = {area}')
+                    print(f'Perimetro {name} = {perimeter}')
+                    print(f'Intensidad {name} = {intensity}')
+                    # cv2.drawContours(n, contour, -1, (0, 255 - 50, 0), 3)
+                    # cv2.imshow(f'{name}', n)
+                    # cv2.waitKey(0)
+                else:
+                    with open('areas.csv','a') as fd:
+                        writer = csv.writer(fd)
+                        writer.writerow([name, str(area), str(perimeter), str(intensity)])
+
 
                 # Graficar el contorno
                 # cv2.drawContours(n, contour, -1, (0, 255 - 50, 0), 3)
-                # cv2.imshow(f'Imagen', n)
+                # cv2.imshow(f'{name}', n)
                 # cv2.waitKey(0)
 
-                # Graficar el panel segmentado (binarizado)
+                # #Graficar el panel segmentado (binarizado)
                 # temp = np.zeros(n.shape, np.uint8)
                 # cv2.drawContours(temp, [approx], -1, (255, 255, 255), -1)
-                # cv2.imshow("Panel segmentado", temp)
+                # cv2.imshow(f"{name}", temp)
                 # cv2.waitKey(0)
 
                 return True #approx, intensity 
@@ -117,7 +124,7 @@ def morph(img, kernel, mode='open'):
     if mode is 'open':
         m = cv2.morphologyEx(img, cv2.MORPH_OPEN, kernel)
     elif mode is 'close':
-        m = cv2.morphologyEx(img, cv2.MORPH_OPEN, kernel)
+        m = cv2.morphologyEx(img, cv2.MORPH_CLOSE, kernel)
 
     return m
 

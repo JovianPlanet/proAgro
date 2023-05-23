@@ -14,15 +14,15 @@ blue_in = ['IMG_0001', 'IMG_0003', 'IMG_0005', 'IMG_0007', 'IMG_0009', 'IMG_0011
            'IMG_0022', 'IMG_0024', 'IMG_0027', 'IMG_0029', 'IMG_0032', 'IMG_0034', 'IMG_0036', 'IMG_0038', 'IMG_0040', 'IMG_0042',\
            'IMG_0044', 'IMG_0046', 'IMG_0048', 'IMG_0050', 'IMG_0052', 'IMG_0054', 'IMG_0056', 'IMG_0057', 'IMG_0015', 'IMG_0000'] 
 
+blue_nums = ['38_4']
+red_nums  = ['35_4']
 
 imagePath = '/media/davidjm/Disco_Compartido/david/datasets/ProyectoAgro/AGUACATE23noviembre/BLUE/000'
-
-#get_panels(os.path.join(imagePath,'IMG_0036_3.tif'), th_type='std', th_val=127, i_lo=120, i_hi=160)
 
 th_type = 'std' # 'otsu' 'std' 'adaptive'
 th_val = 127
 i_lo = 110
-i_hi = 165
+i_hi = 168
 K = 10
 
 print(f'\nConfiguracion:\nUmbral:{th_type}, Valor umbral {th_val}, i low: {i_lo}, i hi: {i_hi}, K: {K}\n')
@@ -41,15 +41,13 @@ for i in range(1, 6):
                                              th_val=th_val, 
                                              i_lo=i_lo, 
                                              i_hi=i_hi, 
-                                             K=K)
+                                             K=K,
+                                             nums=blue_nums)
             )
 
     print(f'Num panels en la banda {keys[i-1]}, sufijo ({i}) = {sum(panels_blue[keys[i-1]])}')
 
 print(f'\nTotal BLUE = {sum([sum(panels_blue[key]) for key in keys])}')
-# for suf, key in enumerate(keys):
-
-#     print(f'Num panels {key} ({suf+1}) = {sum(panels_blue[key])}')
 
 
 imagePath = '/media/davidjm/Disco_Compartido/david/datasets/ProyectoAgro/AGUACATE23noviembre/RED/000'
@@ -69,7 +67,8 @@ for i in range(1, 6):
                                              th_val=th_val, 
                                              i_lo=i_lo, 
                                              i_hi=i_hi, 
-                                             K=K)
+                                             K=K,
+                                             nums=red_nums)
             )
 
         
@@ -77,10 +76,6 @@ for i in range(1, 6):
 
 print(f'\nTotal RED = {sum([sum(panels_red[key]) for key in keys])}')
 
-
-# for suf, key in enumerate(keys):
-
-#     print(f'Num panels {key} ({suf+1}) = {sum(panels_red[key])}')
 
 '''
 1: th_type='otsu', i_lo=110, i_hi=145

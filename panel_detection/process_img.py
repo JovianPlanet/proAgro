@@ -2,60 +2,12 @@ import sys
 import cv2
 import os, glob
 import numpy as np
-from .utils import blur, erosion, get_shape, get_intensity, bin_img, process_contours, bin_cluster
+
+from .clustering import find_clusters
+from .utils import blur, erosion, get_shape, get_intensity, bin_img, process_contours, bin_cluster, morph
 
 
-def find_clusters(img, K=5, i_lo=120, i_hi=140, name=''):
-
-    imgray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
-    vectorized = imgray.reshape((-1, 1))
-    vectorized = np.float32(vectorized)
-
-    criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
-    attempts = 10
-
-    # reshape array to get the long list of RGB colors and then cluster using KMeans()
-
-    for k in range(3, K+1):
-    
-        ret, labels, centers = cv2.kmeans(vectorized, k, None, criteria, attempts, cv2.KMEANS_PP_CENTERS)
-        centers = np.uint8(centers)
-
-        newimage = centers[labels.flatten()]
-        newimage = newimage.reshape(imgray.shape)
-
-        cv2.destroyAllWindows()
-
-        i=0
-
-        # if '07_4' in name:
-        #     print(f'{k=}')
-
-        for r in np.unique(labels)[1:]:
-
-            labels_ = np.where(labels==r, r, 0)
-            l = np.where(labels==r, 255, 0)
-            res = centers[labels_.flatten()]
-
-            result_image1 = res.reshape((imgray.shape))
-            w = int(np.unique(result_image1)[1])
-            a = cv2.inRange(result_image1, w, w)
-            #ret, thresh = cv2.threshold(result_image1, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-
-            eroded = bin_img(a*imgray, 'otsu')
-
-            #contours = None
-
-            contours, hierarchy = cv2.findContours(a*imgray, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_TC89_L1) # CHAIN_APPROX_SIMPLE #RETR_TREE 
-
-            c = process_contours(img, contours, i_lo, i_hi, name)
-
-            if c is not None:
-                return True
-
-
-def get_panels(path, th_type='std', th_val=127, i_lo=120, i_hi=140, K=5):
+def get_panels(path, th_type='std', th_val=127, i_lo=120, i_hi=165, K=5, nums=[]):
 
     '''
     img: imagen
@@ -67,29 +19,46 @@ def get_panels(path, th_type='std', th_val=127, i_lo=120, i_hi=140, K=5):
 
     img = cv2.imread(path)
     img_ = img.copy()
+    img__ = img.copy()
+    img___ = img.copy()
 
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     
     eroded = bin_img(gray, th_type, th_val)
-    # if '07_4' in path:
-    #     cv2.imshow(f'process cotours {path[-15:]}', eroded)
-    #     cv2.waitKey(0)
 
+    # *** *** *** *** *** #
+
+    # Proceso 1: CV
     contours, hierarchy = cv2.findContours(eroded, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE) #  CHAIN_APPROX_TC89_L1
 
-    c = process_contours(img, contours, i_lo=i_lo, i_hi=i_hi, name=path[-15:])
+    c = process_contours(img, contours, path[-15:], i_hi, nums)
 
     if c:
         #print(f'***La imagen {path[-15:]} contiene panel***\n')
         return True
 
-    c = find_clusters(img_, K, i_lo=i_lo, i_hi=i_hi, name=path[-15:])
+    # *** *** *** *** *** #
+
+    # Proceso 2: Morphology
+    kernel = np.ones((5, 5), np.uint8)
+    morph_ = morph(eroded, kernel, mode='open')
+
+    contours, hierarchy = cv2.findContours(morph_, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE) #  CHAIN_APPROX_TC89_L1
+
+    c = process_contours(img_, contours, path[-15:], i_hi, nums)
+
+    if c:
+        return True
+
+    # *** *** *** *** *** #
+
+    # Proceso 3: kmeans
+    c = find_clusters(img__, K, path[-15:], i_hi, nums)
 
     if c:
         #print(f'***La imagen {path[-15:]} contiene panel (kmeans)***\n')
         return True
 
     else:
+        print(f'No se encontro panel: {path[-15:]}')
         return False
-
-    

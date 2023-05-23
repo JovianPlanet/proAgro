@@ -1,5 +1,6 @@
 micasense
 env-Agro
+*.csv
 *.pyc
 *.log
 *.pth
