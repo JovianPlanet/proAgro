@@ -26,8 +26,6 @@ def get_panels(path, th_type='std', th_val=127, i_lo=120, i_hi=165, K=5, nums=[]
     
     eroded = bin_img(gray, th_type, th_val)
 
-    # *** *** *** *** *** #
-
     # Proceso 1: CV
     contours, hierarchy = cv2.findContours(eroded, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE) #  CHAIN_APPROX_TC89_L1
 
@@ -36,8 +34,6 @@ def get_panels(path, th_type='std', th_val=127, i_lo=120, i_hi=165, K=5, nums=[]
     if c:
         #print(f'***La imagen {path[-15:]} contiene panel***\n')
         return True
-
-    # *** *** *** *** *** #
 
     # Proceso 2: Morphology
     kernel = np.ones((5, 5), np.uint8)
@@ -49,8 +45,6 @@ def get_panels(path, th_type='std', th_val=127, i_lo=120, i_hi=165, K=5, nums=[]
 
     if c:
         return True
-
-    # *** *** *** *** *** #
 
     # Proceso 3: kmeans
     c = find_clusters(img__, K, path[-15:], i_hi, nums)

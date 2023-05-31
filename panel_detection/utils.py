@@ -3,8 +3,8 @@ import numpy as np
 import csv
 
 def blur(img, canny=True):
+    
     filtered = cv2.GaussianBlur(img, (3, 3), 0)
-
     if canny:
         filtered = cv2.Canny(filtered, 30, 200)
 
@@ -71,6 +71,40 @@ def bin_img(gray, th_type='std', th_val=127):
 
     return eroded
 
+def morph(img, kernel, mode='open'):
+    if mode == 'open':
+        m = cv2.morphologyEx(img, cv2.MORPH_OPEN, kernel)
+    elif mode == 'close':
+        m = cv2.morphologyEx(img, cv2.MORPH_CLOSE, kernel)
+
+    return m
+
+def bin_cluster(img, centers):
+
+    for center in centers:
+        # select color and create mask
+        layer = img.copy()
+        mask = cv2.inRange(layer, center, center)
+
+        # apply mask to layer 
+        layer[mask == 0] = [0]#,0,0]
+        cv2.imshow('layer', layer)
+        cv2.waitKey(0)
+
+def plot_ctr(img, ctr, title):
+    # Graficar el contorno
+    cv2.drawContours(img, ctr, -1, (0, 255 - 50, 0), 3)
+    cv2.imshow(f'{title}', img)
+    cv2.waitKey(0)
+
+def plot_panel(sh, approx, title):
+    #Graficar el panel segmentado (binarizado)
+    temp = np.zeros(sh, np.uint8)
+    cv2.drawContours(temp, [approx], -1, (255, 255, 255), -1)
+    cv2.imshow(f"{title}", temp)
+    cv2.waitKey(0)
+
+
 def process_contours(n, contours, name='', i_hi=165, nums=[]):
 
     for contour in contours:
@@ -89,57 +123,25 @@ def process_contours(n, contours, name='', i_hi=165, nums=[]):
 
             shape = get_shape(approx)
 
-            if shape == 'square' and intensity < i_hi: #i_lo < intensity < i_hi and shape == 'square':
+            box  = cv2.boxPoints(cv2.minAreaRect(contour))
+            area_box = cv2.contourArea(box)
+            area_ratio = area / area_box
 
-                if name[7:-4] in nums:
-                    pass
-                    print(f'Area {name} = {area}')
-                    print(f'Perimetro {name} = {perimeter}')
-                    print(f'Intensidad {name} = {intensity}')
-                    # cv2.drawContours(n, contour, -1, (0, 255 - 50, 0), 3)
-                    # cv2.imshow(f'{name}', n)
-                    # cv2.waitKey(0)
-                else:
-                    with open('areas.csv','a') as fd:
-                        writer = csv.writer(fd)
-                        writer.writerow([name, str(area), str(perimeter), str(intensity)])
+            if shape == 'square' and intensity < i_hi and area_ratio > 0.75: #i_lo < intensity < i_hi and shape == 'square':
 
+                # print(f'La imagen {name} tienen perimetro = {perimeter}, areabox = {area_box}, a ratio = {area_ratio}')
 
-                # Graficar el contorno
-                # cv2.drawContours(n, contour, -1, (0, 255 - 50, 0), 3)
-                # cv2.imshow(f'{name}', n)
-                # cv2.waitKey(0)
+                with open('areas.csv','a') as fd:
+                    writer = csv.writer(fd)
+                    writer.writerow([name, str(area), str(perimeter), str(intensity), str(area_box), str(area_ratio)])
 
-                # #Graficar el panel segmentado (binarizado)
-                # temp = np.zeros(n.shape, np.uint8)
-                # cv2.drawContours(temp, [approx], -1, (255, 255, 255), -1)
-                # cv2.imshow(f"{name}", temp)
-                # cv2.waitKey(0)
+                # plot_ctr(n, contour, name)
+                # plot_panel(n.shape, approx, name)
 
                 return True #approx, intensity 
 
     return None
 
-def morph(img, kernel, mode='open'):
-    if mode is 'open':
-        m = cv2.morphologyEx(img, cv2.MORPH_OPEN, kernel)
-    elif mode is 'close':
-        m = cv2.morphologyEx(img, cv2.MORPH_CLOSE, kernel)
-
-    return m
-
-def bin_cluster(img, centers):
-
-    for center in centers:
-        # select color and create mask
-        #print(center)
-        layer = img.copy()
-        mask = cv2.inRange(layer, center, center)
-
-        # apply mask to layer 
-        layer[mask == 0] = [0]#,0,0]
-        cv2.imshow('layer', layer)
-        cv2.waitKey(0)
 
 
 '''
