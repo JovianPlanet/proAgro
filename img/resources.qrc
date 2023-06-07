@@ -1,0 +1,10 @@
+<RCC>
+  <qresource prefix="ITMLabels">
+    <file>itm_logo.png</file>
+    <file>itm_logo_small.png</file>
+    <file>itm_logo_sq.png</file>
+    <file>ITM_rect.png</file>
+    <file>new_itm_logo_rec_small.png</file>
+    <file>new_itm_logo_sq_small.png</file>
+  </qresource>
+</RCC>

@@ -1,9 +1,10 @@
 import numpy as np
 import cv2
 
-from .utils import process_contours, bin_img
+from .process_contour import process_contours
+from .utils import bin_img
 
-def find_clusters(img, K=5, name='', i_hi=165, nums=[]):
+def find_clusters(img, K=10, name='', i_hi=168, nums=[]):
 
     imgray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
@@ -37,7 +38,8 @@ def find_clusters(img, K=5, name='', i_hi=165, nums=[]):
 
             contours, hierarchy = cv2.findContours(eroded, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_TC89_L1) # CHAIN_APPROX_SIMPLE #RETR_TREE 
 
-            c = process_contours(img, contours, name, i_hi, nums)
+            c = process_contours(img, contours, name, i_hi)
 
-            if c is not None:
-                return True
+            if c != None:
+                return c
+    return None

@@ -12,3 +12,4 @@ env-Agro
 **pyinstall_win.py
 **/panel_detection/__pycache__
 **panel_kmeans.py
+pipeline.py

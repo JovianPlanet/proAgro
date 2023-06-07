@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-import csv
+
 
 def blur(img, canny=True):
     
@@ -103,44 +103,6 @@ def plot_panel(sh, approx, title):
     cv2.drawContours(temp, [approx], -1, (255, 255, 255), -1)
     cv2.imshow(f"{title}", temp)
     cv2.waitKey(0)
-
-
-def process_contours(n, contours, name='', i_hi=165, nums=[]):
-
-    for contour in contours:
-
-        area = cv2.contourArea(contour)
-        perimeter = cv2.arcLength(contour, True)
-        
-        if area > 18000 and len(contour) < 1000 and perimeter < 900:
-
-            cv2.destroyAllWindows()
-
-            epsilon = 0.09 * perimeter
-            approx = cv2.approxPolyDP(contour, epsilon, True)
-
-            intensity = get_intensity(n, approx)
-
-            shape = get_shape(approx)
-
-            box  = cv2.boxPoints(cv2.minAreaRect(contour))
-            area_box = cv2.contourArea(box)
-            area_ratio = area / area_box
-
-            if shape == 'square' and intensity < i_hi and area_ratio > 0.75: #i_lo < intensity < i_hi and shape == 'square':
-
-                # print(f'La imagen {name} tienen perimetro = {perimeter}, areabox = {area_box}, a ratio = {area_ratio}')
-
-                with open('areas.csv','a') as fd:
-                    writer = csv.writer(fd)
-                    writer.writerow([name, str(area), str(perimeter), str(intensity), str(area_box), str(area_ratio)])
-
-                # plot_ctr(n, contour, name)
-                # plot_panel(n.shape, approx, name)
-
-                return True #approx, intensity 
-
-    return None
 
 
 

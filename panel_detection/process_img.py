@@ -1,13 +1,14 @@
 import sys
 import cv2
-import os, glob
 import numpy as np
 
+from .process_contour import process_contours
 from .clustering import find_clusters
-from .utils import blur, erosion, get_shape, get_intensity, bin_img, process_contours, bin_cluster, morph
+from .utils import bin_img, morph
+from .manual import draw_panel
 
 
-def get_panels(path, th_type='std', th_val=127, i_lo=120, i_hi=165, K=5, nums=[]):
+def get_panels(path, th_type='std', th_val=127, i_lo=110, i_hi=168, K=10, nums=[]):
 
     '''
     img: imagen
@@ -31,9 +32,9 @@ def get_panels(path, th_type='std', th_val=127, i_lo=120, i_hi=165, K=5, nums=[]
 
     c = process_contours(img, contours, path[-15:], i_hi, nums)
 
-    if c:
+    if c != None:
         #print(f'***La imagen {path[-15:]} contiene panel***\n')
-        return True
+        return c
 
     # Proceso 2: Morphology
     kernel = np.ones((5, 5), np.uint8)
@@ -43,15 +44,21 @@ def get_panels(path, th_type='std', th_val=127, i_lo=120, i_hi=165, K=5, nums=[]
 
     c = process_contours(img_, contours, path[-15:], i_hi, nums)
 
-    if c:
-        return True
+    if c != None:
+        return c
 
     # Proceso 3: kmeans
     c = find_clusters(img__, K, path[-15:], i_hi, nums)
 
-    if c:
+    if c != None:
         #print(f'***La imagen {path[-15:]} contiene panel (kmeans)***\n')
-        return True
+        return c
+
+    c = draw_panel(path)
+
+    if c != None:
+        #print(f'***La imagen {path[-15:]} contiene panel (kmeans)***\n')
+        return c
 
     else:
         print(f'No se encontro panel: {path[-15:]}')
