@@ -7,8 +7,8 @@ def draw_panel(path):
     # Read image
     im = cv2.imread(path)
  
-    # Select ROI
-    r = cv2.selectROI(f'Selección manual de panel para la imagen {path[-15:]}. Presione Enter o Space después de seleccionar la ROI.', im)
+    # Select ROI # OJO: en la siguiente funcion NO usar caracteres raros como tildes en el primer parametro
+    r = cv2.selectROI(f'Seleccione manualmente el panel de la imagen {path[-15:]}.', im) 
 
     cv2.destroyAllWindows()
  

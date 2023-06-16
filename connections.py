@@ -25,10 +25,11 @@ class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
         self.search_button.clicked.connect(self.find_panels)
 
         # Atributos
-        self.panels_blue = {'Blue444': [], 'Green531': [], 'Red650': [], 'RedEdge705': [], 'RedEdge740': []}
+        self.panels_blue = {'Blue-444': [], 'Green-531': [], 'Red-650': [], 'Red edge-705': [], 'Red edge-740': []}
         self.bkeys = list(self.panels_blue.keys())
-        self.panels_red = {'Blue': [], 'Green': [], 'Red': [], 'NIR': [], 'RedEdge': []}
+        self.panels_red = {'Blue': [], 'Green': [], 'Red': [], 'NIR': [], 'Red Edge': []}
         self.rkeys = list(self.panels_red.keys())
+        self.cube = {}
 
 
     # Metodo que captura la ruta donde se encuentra la imagen
