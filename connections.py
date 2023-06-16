@@ -28,13 +28,16 @@ class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
         self.search_button.clicked.connect(self.find_panels)
 
         # Atributos
-        self.panels_blue = {'Blue-444': [], 'Green-531': [], 'Red-650': [], 'Red edge-705': [], 'Red edge-740': []}
+        # self.panels_blue = {'Blue-444': [], 'Green-531': [], 'Red-650': [], 'Red edge-705': [], 'Red edge-740': []}
         # self.bkeys = list(self.panels_blue.keys())
-        self.panels_red = {'Blue': [], 'Green': [], 'Red': [], 'NIR': [], 'Red Edge': []}
+        # self.panels_red  = {'Blue': [], 'Green': [], 'Red': [], 'NIR': [], 'Red Edge': []}
         # self.rkeys = list(self.panels_red.keys())
 
-        self.cube = {'Blue-444': [], 'Blue': [], 'Green-531': [], 'Green': [], 'Red-650': [], 
-                     'Red': [], 'Red edge-705': [], 'NIR': [], 'Red edge-740': [], 'Red Edge': []
+        self.cube = {'Blue-444'    : [], 'Blue'    : [], 
+                     'Green-531'   : [], 'Green'   : [], 
+                     'Red-650'     : [], 'Red'     : [], 
+                     'Red edge-705': [], 'NIR'     : [], 
+                     'Red edge-740': [], 'Red Edge': []
         }
 
         self.exiftoolPath = None
@@ -53,9 +56,9 @@ class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
         for i, image in enumerate(imageName):
             blueMeta = metadata.Metadata(image, exiftoolPath=self.exiftoolPath)
             bandname = blueMeta.get_item("XMP:BandName")
-            self.panels_blue[bandname] = get_panels(image)
-            print(f'Intensidad de la banda {bandname} = {self.panels_blue[bandname]}')
-        print(f'{self.panels_blue}')
+            self.cube[bandname] = get_panels(image)
+            print(f'Intensidad de la banda {bandname} = {self.cube[bandname]}')
+        print(f'{self.cube}')
 
         return
 
@@ -70,9 +73,9 @@ class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
         for i, image in enumerate(imageName):
             redMeta = metadata.Metadata(image, exiftoolPath=self.exiftoolPath)
             bandname = redMeta.get_item("XMP:BandName")
-            self.panels_red[bandname] = get_panels(image)
-            print(f'Intensidad de la banda {bandname} = {self.panels_red[bandname]}')
-        print(f'{self.panels_red}')
+            self.cube[bandname] = get_panels(image)
+            print(f'Intensidad de la banda {bandname} = {self.cube[bandname]}')
+        print(f'{self.cube}')
 
         return
 
