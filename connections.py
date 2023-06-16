@@ -2,6 +2,9 @@ import os
 import glob
 import nibabel as nib
 import numpy as np
+import micasense.metadata as metadata
+import exiftool
+
 from PyQt5 import QtWidgets, QtCore
 #from popups import ErrorDialog
 import GUI
@@ -26,11 +29,17 @@ class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
 
         # Atributos
         self.panels_blue = {'Blue-444': [], 'Green-531': [], 'Red-650': [], 'Red edge-705': [], 'Red edge-740': []}
-        self.bkeys = list(self.panels_blue.keys())
+        # self.bkeys = list(self.panels_blue.keys())
         self.panels_red = {'Blue': [], 'Green': [], 'Red': [], 'NIR': [], 'Red Edge': []}
-        self.rkeys = list(self.panels_red.keys())
-        self.cube = {}
+        # self.rkeys = list(self.panels_red.keys())
 
+        self.cube = {'Blue-444': [], 'Blue': [], 'Green-531': [], 'Green': [], 'Red-650': [], 
+                     'Red': [], 'Red edge-705': [], 'NIR': [], 'Red edge-740': [], 'Red Edge': []
+        }
+
+        self.exiftoolPath = None
+        if os.name == 'nt':
+            self.exiftoolPath = os.environ.get('exiftoolpath')
 
     # Metodo que captura la ruta donde se encuentra la imagen
     def get_panel_blue(self):
@@ -42,8 +51,11 @@ class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
         imageName = glob.glob(wc)
 
         for i, image in enumerate(imageName):
-            self.panels_blue[self.bkeys[i]] = get_panels(image)
-            print(f'Intensidad de la banda {self.bkeys[i]}, sufijo ({i+1}) = {self.panels_blue[self.bkeys[i]]}')
+            blueMeta = metadata.Metadata(image, exiftoolPath=self.exiftoolPath)
+            bandname = blueMeta.get_item("XMP:BandName")
+            self.panels_blue[bandname] = get_panels(image)
+            print(f'Intensidad de la banda {bandname} = {self.panels_blue[bandname]}')
+        print(f'{self.panels_blue}')
 
         return
 
@@ -51,12 +63,16 @@ class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
 
         self.pathred, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open File", "Images (*.tiff *.tif)")
         self.lineEdit_red.setText(self.pathred)
+        
         wc = self.pathred[:-5] + '*' + self.pathred[-4:]
         imageName = glob.glob(wc)
 
         for i, image in enumerate(imageName):
-            self.panels_red[self.rkeys[i]] = get_panels(image)
-            print(f'Intensidad de la banda {self.rkeys[i]}, sufijo ({i+1}) = {self.panels_red[self.rkeys[i]]}')
+            redMeta = metadata.Metadata(image, exiftoolPath=self.exiftoolPath)
+            bandname = redMeta.get_item("XMP:BandName")
+            self.panels_red[bandname] = get_panels(image)
+            print(f'Intensidad de la banda {bandname} = {self.panels_red[bandname]}')
+        print(f'{self.panels_red}')
 
         return
 
