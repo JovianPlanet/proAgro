@@ -12,6 +12,8 @@ import GUI
 from panel_detection.manual import draw_panel
 from panel_detection.process_img import get_panels
 
+from panel_detection.utils import get_params
+
 
 class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
 
@@ -56,6 +58,7 @@ class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
         for i, image in enumerate(imageName):
             blueMeta = metadata.Metadata(image, exiftoolPath=self.exiftoolPath)
             bandname = blueMeta.get_item("XMP:BandName")
+            get_params(blueMeta)
             self.cube[bandname] = get_panels(image)
             print(f'Intensidad de la banda {bandname} = {self.cube[bandname]}')
         print(f'{self.cube}')
@@ -73,6 +76,7 @@ class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
         for i, image in enumerate(imageName):
             redMeta = metadata.Metadata(image, exiftoolPath=self.exiftoolPath)
             bandname = redMeta.get_item("XMP:BandName")
+            get_params(redMeta)
             self.cube[bandname] = get_panels(image)
             print(f'Intensidad de la banda {bandname} = {self.cube[bandname]}')
         print(f'{self.cube}')
