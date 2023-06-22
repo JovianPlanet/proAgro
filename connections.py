@@ -30,11 +30,6 @@ class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
         self.search_button.clicked.connect(self.find_panels)
 
         # Atributos
-        # self.panels_blue = {'Blue-444': [], 'Green-531': [], 'Red-650': [], 'Red edge-705': [], 'Red edge-740': []}
-        # self.bkeys = list(self.panels_blue.keys())
-        # self.panels_red  = {'Blue': [], 'Green': [], 'Red': [], 'NIR': [], 'Red Edge': []}
-        # self.rkeys = list(self.panels_red.keys())
-
         self.cube = {'Blue-444'    : [], 'Blue'    : [], 
                      'Green-531'   : [], 'Green'   : [], 
                      'Red-650'     : [], 'Red'     : [], 
@@ -49,7 +44,7 @@ class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
     # Metodo que captura la ruta donde se encuentra la imagen
     def get_panel_blue(self):
 
-        self.pathblue, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open File", "Images (*.tiff *.tif)")
+        self.pathblue, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open File")#, "Images (*.tiff *.tif)")
         self.lineEdit_blue.setText(self.pathblue)
 
         wc = self.pathblue[:-5] + '*' + self.pathblue[-4:]
@@ -58,16 +53,16 @@ class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
         for i, image in enumerate(imageName):
             blueMeta = metadata.Metadata(image, exiftoolPath=self.exiftoolPath)
             bandname = blueMeta.get_item("XMP:BandName")
-            get_params(blueMeta)
-            self.cube[bandname] = get_panels(image)
-            print(f'Intensidad de la banda {bandname} = {self.cube[bandname]}')
+            self.cube[bandname].append(get_panels(image))
+            self.cube[bandname].append(get_params(blueMeta))
+
         print(f'{self.cube}')
 
         return
 
     def get_panel_red(self):
 
-        self.pathred, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open File", "Images (*.tiff *.tif)")
+        self.pathred, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open File")#, "Images (*.tiff *.tif)")
         self.lineEdit_red.setText(self.pathred)
         
         wc = self.pathred[:-5] + '*' + self.pathred[-4:]
@@ -76,9 +71,9 @@ class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
         for i, image in enumerate(imageName):
             redMeta = metadata.Metadata(image, exiftoolPath=self.exiftoolPath)
             bandname = redMeta.get_item("XMP:BandName")
-            get_params(redMeta)
-            self.cube[bandname] = get_panels(image)
-            print(f'Intensidad de la banda {bandname} = {self.cube[bandname]}')
+            self.cube[bandname].append(get_panels(image))
+            self.cube[bandname].append(get_params(redMeta))
+            
         print(f'{self.cube}')
 
         return

@@ -105,17 +105,12 @@ def plot_panel(sh, approx, title):
     cv2.waitKey(0)
 
 def get_params(meta):
-    print(f'{meta.get_item("EXIF:BitsPerSample")}, norm = {2**int(meta.get_item("EXIF:BitsPerSample"))}') # 
-    print(f'{meta.get_item("EXIF:BlackLevel").split(" ")}') 
-    print(f'cx = {meta.get_item("XMP:VignettingCenter")[0]}, cy = {meta.get_item("XMP:VignettingCenter")[1]}')
-    print(f'{meta.get_item("XMP:VignettingPolynomial")}')
-    print(f'{meta.get_item("XMP:RadiometricCalibration")}') 
-    print(f'{meta.get_item("EXIF:ExposureTime")}')
-    print(f'{meta.get_item("EXIF:ISOSpeed")}')
 
     norm    = 2**int(meta.get_item("EXIF:BitsPerSample"))
+
     blist   = [int(i) for i in meta.get_item("EXIF:BlackLevel").split(" ")]
     bl      = sum(blist)/len(blist)
+
     vcenter = meta.get_item("XMP:VignettingCenter")
     vpoly   = meta.get_item("XMP:VignettingPolynomial")
     rcal    = meta.get_item("XMP:RadiometricCalibration")
