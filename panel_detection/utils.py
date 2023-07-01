@@ -116,6 +116,8 @@ def get_params(meta):
     rcal    = meta.get_item("XMP:RadiometricCalibration")
     te      = meta.get_item("EXIF:ExposureTime")
     g       = meta.get_item("EXIF:ISOSpeed")
+    width   = meta.get_item("EXIF:ImageWidth")
+    height  = meta.get_item("EXIF:ImageHeight")
 
     d = {'Norm'    : norm,
          'BL'      : bl,
@@ -124,6 +126,8 @@ def get_params(meta):
          'RadioCal': rcal,
          'Te'      : te,
          'Gain'    : g,
+         'Width'   : width,
+         'Height'  : height
     }
 
     return d

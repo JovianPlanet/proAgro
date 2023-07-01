@@ -14,6 +14,8 @@ from panel_detection.process_img import get_panels
 
 from panel_detection.utils import get_params
 
+from panel_detection.calculations import get_F, get_V
+
 
 class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
 
@@ -27,14 +29,15 @@ class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
         # Conexiones
         self.browse_blue_button.clicked.connect(self.get_panel_blue)
         self.browse_red_button.clicked.connect(self.get_panel_red)
-        self.search_button.clicked.connect(self.find_panels)
+        self.search_button.clicked.connect(self.get_reflectance)
 
         # Atributos
-        self.cube = {'Blue-444'    : [], 'Blue'    : [], 
-                     'Green-531'   : [], 'Green'   : [], 
-                     'Red-650'     : [], 'Red'     : [], 
-                     'Red edge-705': [], 'NIR'     : [], 
-                     'Red edge-740': [], 'Red Edge': []
+        # El cubo inicia por defecto con los valores de intensidad proporcionados por el fabricante para cada lambda
+        self.cube = {'Blue-444'    : [53.7], 'Blue'    : [53.7], 
+                     'Green-531'   : [53.8], 'Green'   : [53.8], 
+                     'Red-650'     : [53.7], 'Red'     : [53.7], 
+                     'Red edge-705': [53.6], 'NIR'     : [53.6], 
+                     'Red edge-740': [53.6], 'Red Edge': [53.3]
         }
 
         self.exiftoolPath = None
@@ -78,8 +81,10 @@ class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
 
         return
 
-    def find_panels(self):
+    def get_reflectance(self):
 
-        if self.manual_cb.isChecked():
-            r = draw_panel(self.path)
-            print(f'{r}')
+        # Factor de calibracion por banda
+        F_lambda = get_F(self.cube)
+        print(f'Factores de calibracion = {F_lambda}')
+
+        V_lambda = get_V(self.cube)

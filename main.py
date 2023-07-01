@@ -1,7 +1,7 @@
 #-*- coding: utf-8 -*-
-
-from PyQt5 import QtWidgets
+import os
 import sys
+from PyQt5 import QtWidgets
 import connections
 
 
@@ -14,4 +14,5 @@ def main():
 
 if __name__ == '__main__':
 
+    # os.environ.pop("QT_QPA_PLATFORM_PLUGIN_PATH")
     main()
