@@ -59,7 +59,7 @@ class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
             self.cube[bandname].append(get_panels(image))
             self.cube[bandname].append(get_params(blueMeta))
 
-        print(f'{self.cube}')
+        # print(f'{self.cube}')
 
         return
 
@@ -77,7 +77,7 @@ class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
             self.cube[bandname].append(get_panels(image))
             self.cube[bandname].append(get_params(redMeta))
             
-        print(f'{self.cube}')
+        # print(f'{self.cube}')
 
         return
 
@@ -85,6 +85,7 @@ class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
 
         # Factor de calibracion por banda
         F_lambda = get_F(self.cube)
-        print(f'Factores de calibracion = {F_lambda}')
+        #print(f'Factores de calibracion = {F_lambda}')
 
         V_lambda = get_V(self.cube)
+        print(V_lambda)
