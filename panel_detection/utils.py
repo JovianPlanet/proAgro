@@ -132,6 +132,14 @@ def get_params(meta):
 
     return d
 
+def get_ImArray(path):
+
+    img = cv2.imread(path, cv2.IMREAD_UNCHANGED)
+
+    return img
+
+
+
  
 
 '''
