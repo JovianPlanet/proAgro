@@ -1,6 +1,5 @@
 import os
 import glob
-import nibabel as nib
 import numpy as np
 import micasense.metadata as metadata
 import exiftool
@@ -11,10 +10,8 @@ import GUI
 
 from panel_detection.manual import draw_panel
 from panel_detection.process_img import get_panels
-
 from panel_detection.utils import get_params, get_ImArray
-
-from panel_detection.calculations import get_F, get_V, get_Rv, correct_im
+from panel_detection.calculations import get_F, get_V, get_Rv, get_L, get_R, correct_im, get_In, get_L2
 
 
 class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
@@ -97,8 +94,33 @@ class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
             
         return
 
-    # Computes the reflectance image per wavelength
+    # Computes the reflectance image per wavelength (Metodo documento Word calibracion.docx)
     def get_reflectance(self):
+
+        # Factor de calibracion por banda
+        F_lambda = get_F(self.cube)
+        #print(f'Factores de calibracion = {F_lambda}')
+
+        # Polinomio de vineta
+        V_lambda = get_V(self.cube)
+        #print(V_lambda)
+
+        Rv_lambda = get_Rv(self.cube)
+        #print(Rv_lambda)
+
+        # Imagen original corregida a nivel de negro
+        Pc_lambda = correct_im(self.cube, self.Pans)
+        #print(Pc_lambda)
+
+        # Radiancia espectral por longitud de onda
+        L_lambda = get_L(self.cube, V_lambda, Rv_lambda, Pc_lambda)
+
+        # Reflectancia por longitud de onda
+        R_lambda = get_R(F_lambda, L_lambda)
+
+
+    # Computes the reflectance image per wavelength (Metodo pagina micasense)
+    def get_reflectance2(self):
 
         # Factor de calibracion por banda
         F_lambda = get_F(self.cube)
@@ -108,7 +130,11 @@ class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
         #print(V_lambda)
 
         Rv_lambda = get_Rv(self.cube)
-        #print(Rv_lambda)
 
-        Pc_lambda = correct_im(self.cube, self.Pans)
-        # print(Pc_lambda)
+        Pn_lambda = get_In(self.cube, self.Pans)
+
+        L_lambda = get_L2(self.cube, V_lambda, Rv_lambda, Pn_lambda)
+
+        #print(Pn_lambda)
+
+
