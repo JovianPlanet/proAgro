@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>453</width>
-    <height>588</height>
+    <height>611</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <x>9</x>
      <y>9</y>
      <width>431</width>
-     <height>561</height>
+     <height>583</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -35,7 +35,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Detección de páneles
+         <string>Detección de Paneles
 para Cámara
 MicaSense Dualsystem</string>
         </property>
@@ -78,7 +78,7 @@ MicaSense Dualsystem</string>
          </font>
         </property>
         <property name="text">
-         <string>BLUE Image</string>
+         <string>BLUE</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -88,51 +88,53 @@ MicaSense Dualsystem</string>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
-         <spacer name="horizontalSpacer_5">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::Fixed</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="lineEdit_blue"/>
-        </item>
-        <item>
-         <widget class="QPushButton" name="browse_blue_button">
-          <property name="text">
-           <string>Browse</string>
+         <widget class="QLineEdit" name="lineEdit_bluepanel">
+          <property name="inputMask">
+           <string/>
           </property>
          </widget>
         </item>
         <item>
-         <spacer name="horizontalSpacer_6">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+         <widget class="QPushButton" name="browse_bluepanel_button">
+          <property name="text">
+           <string>Panel</string>
           </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::Fixed</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
+         </widget>
         </item>
        </layout>
       </item>
       <item>
-       <widget class="QLabel" name="label">
+       <spacer name="verticalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>5</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <item>
+         <widget class="QLineEdit" name="lineEdit_blueimg"/>
+        </item>
+        <item>
+         <widget class="QPushButton" name="browse_blueimg_button">
+          <property name="text">
+           <string>Imagen</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QLabel" name="blueok_label">
         <property name="palette">
          <palette>
           <active>
@@ -226,7 +228,7 @@ MicaSense Dualsystem</string>
          </font>
         </property>
         <property name="text">
-         <string>RED Image</string>
+         <string>RED</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -252,12 +254,19 @@ MicaSense Dualsystem</string>
          </spacer>
         </item>
         <item>
-         <widget class="QLineEdit" name="lineEdit_red"/>
+         <widget class="QLineEdit" name="lineEdit_redpanel">
+          <property name="text">
+           <string extracomment="Introduzca ruta de panel Red"/>
+          </property>
+          <property name="maxLength">
+           <number>32767</number>
+          </property>
+         </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="browse_red_button">
+         <widget class="QPushButton" name="browse_redpanel_button">
           <property name="text">
-           <string>Browse</string>
+           <string>Panel</string>
           </property>
          </widget>
         </item>
@@ -280,20 +289,73 @@ MicaSense Dualsystem</string>
        </layout>
       </item>
       <item>
-       <spacer name="verticalSpacer_3">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
+       <layout class="QHBoxLayout" name="horizontalLayout_6">
+        <property name="spacing">
+         <number>6</number>
         </property>
-        <property name="sizeType">
-         <enum>QSizePolicy::Fixed</enum>
+        <property name="topMargin">
+         <number>0</number>
         </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
+        <item>
+         <spacer name="horizontalSpacer_5">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>5</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="lineEdit_redimg">
+          <property name="inputMask">
+           <string extracomment="Introduzca ruta de imagen Red"/>
+          </property>
+          <property name="text">
+           <string extracomment="Introduzca ruta de imagen Red"/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="browse_redimg_button">
+          <property name="text">
+           <string>Imagen</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_6">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QLabel" name="redok_label">
+        <property name="text">
+         <string>Ok</string>
         </property>
-       </spacer>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>
@@ -379,16 +441,16 @@ MicaSense Dualsystem</string>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>150</width>
+            <width>100</width>
             <height>20</height>
            </size>
           </property>
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="search_button">
+         <widget class="QPushButton" name="compute_button">
           <property name="text">
-           <string>Buscar pánel</string>
+           <string>Calcular</string>
           </property>
          </widget>
         </item>
@@ -402,7 +464,7 @@ MicaSense Dualsystem</string>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>150</width>
+            <width>100</width>
             <height>20</height>
            </size>
           </property>
