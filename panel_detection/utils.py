@@ -37,7 +37,8 @@ def get_shape(approx):
 
 def get_intensity(img, region):
     # Create blank image
-    blank_image = np.zeros(img.shape, np.uint8)
+    blank_image = np.zeros_like(img) # np.zeros(img.shape, np.uint8)
+    print(f'{np.iinfo(blank_image.dtype)}')
 
     # Draw contour in the mask
     cv2.drawContours(blank_image, [region], -1, (255, 255, 255), -1)
