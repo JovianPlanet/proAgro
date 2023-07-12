@@ -23,10 +23,15 @@ class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
         self.pathPanBlue = ''
         self.pathPanRed = ''
 
+        self.browse_blueimg_button.setEnabled(False)
+        self.browse_redimg_button.setEnabled(False)
+
         # Conexiones
-        self.browse_blue_button.clicked.connect(self.get_panel_blue)
-        self.browse_red_button.clicked.connect(self.get_panel_red)
-        self.search_button.clicked.connect(self.get_reflectance)
+        self.browse_bluepanel_button.clicked.connect(self.get_panel_blue)
+        self.browse_blueimg_button.clicked.connect(self.get_img_blue)
+        self.browse_redpanel_button.clicked.connect(self.get_panel_red)
+        self.browse_redimg_button.clicked.connect(self.get_img_red)
+        self.compute_button.clicked.connect(self.get_reflectance)
 
         # Atributos
         # El cubo inicia por defecto con los valores de intensidad proporcionados por el fabricante para cada lambda
@@ -37,6 +42,13 @@ class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
                     'Red edge-740': None, 'Red Edge': None
         }
 
+        self.img_cube = {'Blue-444'    : [53.7], 'Blue'    : [53.7], 
+                         'Green-531'   : [53.8], 'Green'   : [53.8], 
+                         'Red-650'     : [53.7], 'Red'     : [53.7], 
+                         'Red edge-705': [53.6], 'NIR'     : [53.6], 
+                         'Red edge-740': [53.6], 'Red Edge': [53.3]
+        }
+
         self.Pans = {'Blue-444'    : None, 'Blue'    : None, 
                      'Green-531'   : None, 'Green'   : None, 
                      'Red-650'     : None, 'Red'     : None, 
@@ -44,11 +56,11 @@ class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
                      'Red edge-740': None, 'Red Edge': None
         }
         
-        self.cube = {'Blue-444'    : [53.7], 'Blue'    : [53.7], 
-                     'Green-531'   : [53.8], 'Green'   : [53.8], 
-                     'Red-650'     : [53.7], 'Red'     : [53.7], 
-                     'Red edge-705': [53.6], 'NIR'     : [53.6], 
-                     'Red edge-740': [53.6], 'Red Edge': [53.3]
+        self.panel_cube = {'Blue-444'    : [53.7], 'Blue'    : [53.7], 
+                           'Green-531'   : [53.8], 'Green'   : [53.8], 
+                           'Red-650'     : [53.7], 'Red'     : [53.7], 
+                           'Red edge-705': [53.6], 'NIR'     : [53.6], 
+                           'Red edge-740': [53.6], 'Red Edge': [53.3]
         }
 
         self.exiftoolPath = None
@@ -59,7 +71,7 @@ class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
     def get_panel_blue(self):
 
         self.pathPanBlue, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open File")#, "Images (*.tiff *.tif)")
-        self.lineEdit_blue.setText(self.pathPanBlue)
+        self.lineEdit_bluepanel.setText(self.pathPanBlue)
 
         wc = self.pathPanBlue[:-5] + '*' + self.pathPanBlue[-4:]
         imageName = glob.glob(wc)
@@ -68,17 +80,39 @@ class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
             blueMeta = metadata.Metadata(image, exiftoolPath=self.exiftoolPath)
             bandname = blueMeta.get_item("XMP:BandName")
 
-            self.cube[bandname].append(get_panels(image))
-            self.cube[bandname].append(get_params(blueMeta))
+            self.panel_cube[bandname].append(get_panels(image))
+            self.panel_cube[bandname].append(get_params(blueMeta))
 
             self.Pans[bandname] = get_ImArray(image)
+
+        self.browse_blueimg_button.setEnabled(True)
+
+        return
+
+    def get_img_blue(self):
+
+        self.pathImgBlue, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open File")#, "Images (*.tiff *.tif)")
+        self.lineEdit_blueimg.setText(self.pathImgBlue)
+
+        wc = self.pathImgBlue[:-5] + '*' + self.pathImgBlue[-4:]
+        imageName = glob.glob(wc)
+
+        for i, image in enumerate(imageName):
+            blueMeta = metadata.Metadata(image, exiftoolPath=self.exiftoolPath)
+            bandname = blueMeta.get_item("XMP:BandName")
+
+            self.img_cube[bandname].append(get_params(blueMeta))
+
+            self.Ims[bandname] = get_ImArray(image)
+
+        self.browse_blueimg_button.setEnabled(False)
 
         return
 
     def get_panel_red(self):
 
         self.pathPanRed, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open File")#, "Images (*.tiff *.tif)")
-        self.lineEdit_red.setText(self.pathPanRed)
+        self.lineEdit_redpanel.setText(self.pathPanRed)
         
         wc = self.pathPanRed[:-5] + '*' + self.pathPanRed[-4:]
         imageName = glob.glob(wc)
@@ -87,53 +121,77 @@ class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
             redMeta = metadata.Metadata(image, exiftoolPath=self.exiftoolPath)
             bandname = redMeta.get_item("XMP:BandName")
 
-            self.cube[bandname].append(get_panels(image))
-            self.cube[bandname].append(get_params(redMeta))
+            self.panel_cube[bandname].append(get_panels(image))
+            self.panel_cube[bandname].append(get_params(redMeta))
 
             self.Pans[bandname] = get_ImArray(image)
+
+        self.browse_redimg_button.setEnabled(True)
             
+        return
+
+    def get_img_red(self):
+
+        self.pathImgRed, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open File")#, "Images (*.tiff *.tif)")
+        self.lineEdit_redimg.setText(self.pathImgRed)
+
+        wc = self.pathImgRed[:-5] + '*' + self.pathImgRed[-4:]
+        imageName = glob.glob(wc)
+
+        for i, image in enumerate(imageName):
+            redMeta = metadata.Metadata(image, exiftoolPath=self.exiftoolPath)
+            bandname = redMeta.get_item("XMP:BandName")
+
+            self.img_cube[bandname].append(get_params(redMeta))
+
+            self.Ims[bandname] = get_ImArray(image)
+
+        self.browse_redimg_button.setEnabled(False)
+
         return
 
     # Computes the reflectance image per wavelength (Metodo documento Word calibracion.docx)
     def get_reflectance(self):
 
         # Factor de calibracion por banda
-        F_lambda = get_F(self.cube)
+        F_lambda = get_F(self.panel_cube)
         #print(f'Factores de calibracion = {F_lambda}')
 
         # Polinomio de vineta
-        V_lambda = get_V(self.cube)
+        V_lambda = get_V(self.panel_cube)
         #print(V_lambda)
 
-        Rv_lambda = get_Rv(self.cube)
+        Rv_lambda = get_Rv(self.panel_cube)
         #print(Rv_lambda)
 
         # Imagen original corregida a nivel de negro
-        Pc_lambda = correct_im(self.cube, self.Pans)
+        Pc_lambda = correct_im(self.panel_cube, self.Pans)
         #print(Pc_lambda)
 
         # Radiancia espectral por longitud de onda
-        L_lambda = get_L(self.cube, V_lambda, Rv_lambda, Pc_lambda)
+        L_lambda = get_L(self.panel_cube, V_lambda, Rv_lambda, Pc_lambda)
 
         # Reflectancia por longitud de onda
         R_lambda = get_R(F_lambda, L_lambda)
+
+        print(f'\nDone!\n')
 
 
     # Computes the reflectance image per wavelength (Metodo pagina micasense)
     def get_reflectance2(self):
 
         # Factor de calibracion por banda
-        F_lambda = get_F(self.cube)
+        F_lambda = get_F(self.panel_cube)
         #print(f'Factores de calibracion = {F_lambda}')
 
-        V_lambda = get_V(self.cube)
+        V_lambda = get_V(self.panel_cube)
         #print(V_lambda)
 
-        Rv_lambda = get_Rv(self.cube)
+        Rv_lambda = get_Rv(self.panel_cube)
 
-        Pn_lambda = get_In(self.cube, self.Pans)
+        Pn_lambda = get_In(self.panel_cube, self.Pans)
 
-        L_lambda = get_L2(self.cube, V_lambda, Rv_lambda, Pn_lambda)
+        L_lambda = get_L2(self.panel_cube, V_lambda, Rv_lambda, Pn_lambda)
 
         #print(Pn_lambda)
 
