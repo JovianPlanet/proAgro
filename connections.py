@@ -31,7 +31,7 @@ class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
         self.browse_blueimg_button.clicked.connect(self.get_img_blue)
         self.browse_redpanel_button.clicked.connect(self.get_panel_red)
         self.browse_redimg_button.clicked.connect(self.get_img_red)
-        self.compute_button.clicked.connect(self.get_reflectance)
+        self.compute_button.clicked.connect(self.get_L)
 
         # Atributos
         # El cubo inicia por defecto con los valores de intensidad proporcionados por el fabricante para cada lambda
@@ -80,7 +80,7 @@ class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
             blueMeta = metadata.Metadata(image, exiftoolPath=self.exiftoolPath)
             bandname = blueMeta.get_item("XMP:BandName")
 
-            self.panel_cube[bandname].append(get_panels(image))
+            #self.panel_cube[bandname].append(get_panels(image))
             self.panel_cube[bandname].append(get_params(blueMeta))
 
             self.Pans[bandname] = get_ImArray(image)
@@ -109,6 +109,7 @@ class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
 
         return
 
+
     def get_panel_red(self):
 
         self.pathPanRed, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open File")#, "Images (*.tiff *.tif)")
@@ -121,7 +122,7 @@ class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
             redMeta = metadata.Metadata(image, exiftoolPath=self.exiftoolPath)
             bandname = redMeta.get_item("XMP:BandName")
 
-            self.panel_cube[bandname].append(get_panels(image))
+            #self.panel_cube[bandname].append(get_panels(image))
             self.panel_cube[bandname].append(get_params(redMeta))
 
             self.Pans[bandname] = get_ImArray(image)
@@ -149,6 +150,38 @@ class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
         self.browse_redimg_button.setEnabled(False)
 
         return
+
+    def get_L(self):
+
+        # Radiancia espectral por longitud de onda de los paneles
+        Lp_lambda = get_L(self.panel_cube, self.Pans) # V_lambda, Rv_lambda, Pc_lambda)
+
+        # Radiancia espectral por longitud de onda de las imagenes
+        Li_lambda = get_L(self.img_cube, self.Ims)
+
+        print(Lp_lambda)
+
+        return
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     # Computes the reflectance image per wavelength (Metodo documento Word calibracion.docx)
     def get_reflectance(self):

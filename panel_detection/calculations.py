@@ -50,13 +50,13 @@ def get_V(cube):
 
         # Nota: En numpy las imagenes no estan dadas de la forma (width, heigth) sino de la forma (rows, cols)
         # Por la tanto una imagen de 1280 x 960 pixeles tiene shape (960, 1280)
-        a = np.ones((cube[key][2]['Height'], cube[key][2]['Width'])) 
+        a = np.ones((cube[key][1]['Height'], cube[key][1]['Width'])) 
         
-        cx, cy = cube[key][2]['Vcenter']
+        cx, cy = cube[key][1]['Vcenter']
 
         r = get_r(a, cx, cy)
 
-        k = [float(k_) for k_ in (cube[key][2]['Vpoly'])]
+        k = [float(k_) for k_ in (cube[key][1]['Vpoly'])]
 
         den = 1 + k[0]*r + k[1]*r**2 + k[2]*r**3 + k[3]*r**4 + k[4]*r**5 + k[5]*r**6
 
@@ -78,12 +78,12 @@ def get_Rv(cube):
 
     for key in cube.keys():
 
-        _, a2, a3 = cube[key][2]['RadioCal']
-        Te = cube[key][2]['Te']
+        _, a2, a3 = cube[key][1]['RadioCal']
+        Te = cube[key][1]['Te']
 
-        y = np.tile(np.array(range(1, cube[key][2]['Width']+1)).reshape(1, cube[key][2]['Width']), (cube[key][2]['Height'], 1))
+        y = np.tile(np.array(range(1, cube[key][1]['Width']+1)).reshape(1, cube[key][1]['Width']), (cube[key][1]['Height'], 1))
 
-        #den = np.array([1 + (a2*y/Te) - (a3*y) for y in range(cube[key][2]['Height'])])
+        #den = np.array([1 + (a2*y/Te) - (a3*y) for y in range(cube[key][1]['Height'])])
         den = 1 + (a2*y/Te) - (a3*y)
 
         Rv[key] = 1 / den
@@ -101,13 +101,13 @@ def correct_im(cube, ims):
 
     for key in ims.keys():
 
-        bl = cube[key][2]['BL']
+        bl = cube[key][1]['BL']
 
         I[key] = ims[key] - bl
 
     return I
 
-def get_L(cube, V, Rv, Pc):
+def get_L(metacube, imgcube):
 
     L = {'Blue-444'    : [], 'Blue'    : [], 
          'Green-531'   : [], 'Green'   : [], 
@@ -116,12 +116,23 @@ def get_L(cube, V, Rv, Pc):
          'Red edge-740': [], 'Red Edge': []
     }
 
+    # Polinomio de vineta
+    V = get_V(metacube)
+    #print(V_lambda)
+
+    Rv = get_Rv(metacube)
+    #print(Rv_lambda)
+
+    # Imagen original corregida a nivel de negro
+    Pc = correct_im(metacube, imgcube)
+    #print(Pc_lambda)
+
     for key in L.keys():
 
-        g        = cube[key][2]['Gain']
-        Te       = cube[key][2]['Te']
-        a1, _, _ = cube[key][2]['RadioCal']
-        norm     = cube[key][2]['Norm']
+        g        = metacube[key][1]['Gain']
+        Te       = metacube[key][1]['Te']
+        a1, _, _ = metacube[key][1]['RadioCal']
+        norm     = metacube[key][1]['Norm']
 
         a1 = float(a1)
 
@@ -166,8 +177,8 @@ def get_In(cube, ims):
 
     for key in In.keys():
 
-        norm = cube[key][2]['Norm']
-        bl = cube[key][2]['BL']
+        norm = cube[key][1]['Norm']
+        bl = cube[key][1]['BL']
 
         ro_bl = bl / norm
 
@@ -188,9 +199,9 @@ def get_L2(cube, V, Rv, Pn):
 
     for key in L2.keys():
 
-        a1, _, _ = cube[key][2]['RadioCal']
-        g = cube[key][2]['Gain']
-        Te = cube[key][2]['Te']
+        a1, _, _ = cube[key][1]['RadioCal']
+        g = cube[key][1]['Gain']
+        Te = cube[key][1]['Te']
         # print(f'{a1}, {type(g)}, {float(a1)}, {type(Te)}')
 
         k = float(a1) / (g*Te)

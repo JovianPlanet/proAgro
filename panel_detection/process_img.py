@@ -11,11 +11,12 @@ from .manual import draw_panel
 def get_panels(path, th_type='std', th_val=127, i_lo=110, i_hi=168, K=10, nums=[]):
 
     '''
-    img: imagen
+    path: ruta de la imagen
     th_type: tipo de umbral ('std' u 'Otsu')
     th_val: valor para umbralizar en caso que th_type='std'
     i_lo: limite inferior de intensidad (criterio para encontrar el panel)
     i_hi: limite superior de intensidad (criterio para encontrar el panel)
+    k: numero de clusteres kmeans
     '''
 
     img = cv2.imread(path)
