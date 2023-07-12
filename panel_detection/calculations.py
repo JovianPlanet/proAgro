@@ -63,7 +63,7 @@ def get_V(cube):
         V[key] = 1 / den
 
         # if '444' in key:
-        #     print(f'{V}\n')
+        #     print(f'{V[key]}\n')
 
     return V
 
@@ -105,6 +105,9 @@ def correct_im(cube, ims):
 
         I[key] = ims[key] - bl
 
+        if '444' in key:
+            print(f'{I[key]}\n')
+
     return I
 
 def get_L(metacube, imgcube):
@@ -141,6 +144,10 @@ def get_L(metacube, imgcube):
         L[key] = np.where(L[key]<0., 0., L[key])
 
         L[key] = (L[key]*a1) / (g*Te*norm)
+
+        if '444' in key:
+            print(f'{a1=}, {Te=}, {g=}, {norm=}') 
+            print(f'{L[key]}\n')
 
     return L
 

@@ -159,7 +159,7 @@ class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
         # Radiancia espectral por longitud de onda de las imagenes
         Li_lambda = get_L(self.img_cube, self.Ims)
 
-        print(Lp_lambda)
+        #print(Lp_lambda)
 
         return
 
