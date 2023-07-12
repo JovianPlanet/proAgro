@@ -8,7 +8,7 @@ from .utils import bin_img, morph
 from .manual import draw_panel
 
 
-def get_panels(path, th_type='std', th_val=127, i_lo=110, i_hi=168, K=10, nums=[]):
+def get_panels(path, L, th_type='std', th_val=127, i_lo=110, i_hi=168, K=10, nums=[]):
 
     '''
     path: ruta de la imagen
@@ -31,7 +31,7 @@ def get_panels(path, th_type='std', th_val=127, i_lo=110, i_hi=168, K=10, nums=[
     # Proceso 1: CV
     contours, hierarchy = cv2.findContours(eroded, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE) #  CHAIN_APPROX_TC89_L1
 
-    c = process_contours(img, contours, path[-15:], i_hi, nums)
+    c = process_contours(img, contours, L, path[-15:], i_hi, nums)
 
     if c != None:
         #print(f'***La imagen {path[-15:]} contiene panel***\n')
@@ -43,19 +43,19 @@ def get_panels(path, th_type='std', th_val=127, i_lo=110, i_hi=168, K=10, nums=[
 
     contours, hierarchy = cv2.findContours(morph_, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE) #  CHAIN_APPROX_TC89_L1
 
-    c = process_contours(img_, contours, path[-15:], i_hi, nums)
+    c = process_contours(img_, contours, L, path[-15:], i_hi, nums)
 
     if c != None:
         return c
 
     # Proceso 3: kmeans
-    c = find_clusters(img__, K, path[-15:], i_hi, nums)
+    c = find_clusters(img__, L, K, path[-15:], i_hi, nums)
 
     if c != None:
         #print(f'***La imagen {path[-15:]} contiene panel (kmeans)***\n')
         return c
 
-    c = draw_panel(path)
+    c = draw_panel(path, L)
 
     if c != None:
         #print(f'***La imagen {path[-15:]} contiene panel (kmeans)***\n')

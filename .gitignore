@@ -5,6 +5,8 @@ env-Agro
 *.log
 *.pth
 *.txt
+*.tif
+*.tiff
 **/__pycache__
 **/data
 **GUI_.py

@@ -8,10 +8,8 @@ from PyQt5 import QtWidgets, QtCore
 #from popups import ErrorDialog
 import GUI
 
-from panel_detection.manual import draw_panel
-from panel_detection.process_img import get_panels
 from panel_detection.utils import get_params, get_ImArray
-from panel_detection.calculations import get_F, get_V, get_Rv, get_L, get_R, correct_im, get_In, get_L2
+from panel_detection.calculations import get_F, get_L, get_R
 
 
 class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
@@ -31,10 +29,12 @@ class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
         self.browse_blueimg_button.clicked.connect(self.get_img_blue)
         self.browse_redpanel_button.clicked.connect(self.get_panel_red)
         self.browse_redimg_button.clicked.connect(self.get_img_red)
-        self.compute_button.clicked.connect(self.get_L)
+        self.compute_button.clicked.connect(self.get_reflectance)
 
         # Atributos
-        # El cubo inicia por defecto con los valores de intensidad proporcionados por el fabricante para cada lambda
+        self.blue_stack = ''
+        self.red_stack = ''
+
         self.Ims = {'Blue-444'    : None, 'Blue'    : None, 
                     'Green-531'   : None, 'Green'   : None, 
                     'Red-650'     : None, 'Red'     : None, 
@@ -42,6 +42,7 @@ class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
                     'Red edge-740': None, 'Red Edge': None
         }
 
+        # El cubo inicia por defecto con los valores de calibracion proporcionados por el fabricante para cada lambda
         self.img_cube = {'Blue-444'    : [53.7], 'Blue'    : [53.7], 
                          'Green-531'   : [53.8], 'Green'   : [53.8], 
                          'Red-650'     : [53.7], 'Red'     : [53.7], 
@@ -80,8 +81,8 @@ class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
             blueMeta = metadata.Metadata(image, exiftoolPath=self.exiftoolPath)
             bandname = blueMeta.get_item("XMP:BandName")
 
-            #self.panel_cube[bandname].append(get_panels(image))
             self.panel_cube[bandname].append(get_params(blueMeta))
+            self.panel_cube[bandname].append(image)
 
             self.Pans[bandname] = get_ImArray(image)
 
@@ -96,12 +97,14 @@ class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
 
         wc = self.pathImgBlue[:-5] + '*' + self.pathImgBlue[-4:]
         imageName = glob.glob(wc)
+        self.blue_stack = self.pathImgBlue[-10:-6]
 
         for i, image in enumerate(imageName):
             blueMeta = metadata.Metadata(image, exiftoolPath=self.exiftoolPath)
             bandname = blueMeta.get_item("XMP:BandName")
 
             self.img_cube[bandname].append(get_params(blueMeta))
+            self.img_cube[bandname].append(image)
 
             self.Ims[bandname] = get_ImArray(image)
 
@@ -122,8 +125,8 @@ class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
             redMeta = metadata.Metadata(image, exiftoolPath=self.exiftoolPath)
             bandname = redMeta.get_item("XMP:BandName")
 
-            #self.panel_cube[bandname].append(get_panels(image))
             self.panel_cube[bandname].append(get_params(redMeta))
+            self.panel_cube[bandname].append(image)
 
             self.Pans[bandname] = get_ImArray(image)
 
@@ -138,12 +141,14 @@ class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
 
         wc = self.pathImgRed[:-5] + '*' + self.pathImgRed[-4:]
         imageName = glob.glob(wc)
+        self.red_stack = self.pathImgRed[-10:-6]
 
         for i, image in enumerate(imageName):
             redMeta = metadata.Metadata(image, exiftoolPath=self.exiftoolPath)
             bandname = redMeta.get_item("XMP:BandName")
 
             self.img_cube[bandname].append(get_params(redMeta))
+            self.img_cube[bandname].append(image)
 
             self.Ims[bandname] = get_ImArray(image)
 
@@ -151,81 +156,24 @@ class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
 
         return
 
-    def get_L(self):
+    def get_reflectance(self):
+
+        fn = 'IMG_B' + self.blue_stack + '_R' + self.red_stack + '.tif'
 
         # Radiancia espectral por longitud de onda de los paneles
         Lp_lambda = get_L(self.panel_cube, self.Pans) # V_lambda, Rv_lambda, Pc_lambda)
-
         # Radiancia espectral por longitud de onda de las imagenes
         Li_lambda = get_L(self.img_cube, self.Ims)
 
-        #print(Lp_lambda)
+        # Factor de calibracion del panel
+        Fp_lambda = get_F(self.panel_cube, Lp_lambda)
+
+        # Reflectancia por longitud de onda
+        # Rp_lambda = get_R(Lp_lambda, Fp_lambda)
+        Ri_lambda = get_R(Li_lambda, Fp_lambda, fn)
 
         return
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    # Computes the reflectance image per wavelength (Metodo documento Word calibracion.docx)
-    def get_reflectance(self):
-
-        # Factor de calibracion por banda
-        F_lambda = get_F(self.panel_cube)
-        #print(f'Factores de calibracion = {F_lambda}')
-
-        # Polinomio de vineta
-        V_lambda = get_V(self.panel_cube)
-        #print(V_lambda)
-
-        Rv_lambda = get_Rv(self.panel_cube)
-        #print(Rv_lambda)
-
-        # Imagen original corregida a nivel de negro
-        Pc_lambda = correct_im(self.panel_cube, self.Pans)
-        #print(Pc_lambda)
-
-        # Radiancia espectral por longitud de onda
-        L_lambda = get_L(self.panel_cube, V_lambda, Rv_lambda, Pc_lambda)
-
-        # Reflectancia por longitud de onda
-        R_lambda = get_R(F_lambda, L_lambda)
-
-        print(f'\nDone!\n')
-
-
-    # Computes the reflectance image per wavelength (Metodo pagina micasense)
-    def get_reflectance2(self):
-
-        # Factor de calibracion por banda
-        F_lambda = get_F(self.panel_cube)
-        #print(f'Factores de calibracion = {F_lambda}')
-
-        V_lambda = get_V(self.panel_cube)
-        #print(V_lambda)
-
-        Rv_lambda = get_Rv(self.panel_cube)
-
-        Pn_lambda = get_In(self.panel_cube, self.Pans)
-
-        L_lambda = get_L2(self.panel_cube, V_lambda, Rv_lambda, Pn_lambda)
-
-        #print(Pn_lambda)
 
 

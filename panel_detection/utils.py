@@ -35,20 +35,20 @@ def get_shape(approx):
 
         return shape
 
-def get_intensity(img, region):
+# Tomada de: https://stackoverflow.com/questions/63456523/opencv-average-intensity-of-contour-figures-in-grayscale-image
+def get_intensity(L, region):
     # Create blank image
-    blank_image = np.zeros_like(img) # np.zeros(img.shape, np.uint8)
-    print(f'{np.iinfo(blank_image.dtype)}')
+    blank_image = np.zeros(L.shape, np.uint8)
 
     # Draw contour in the mask
-    cv2.drawContours(blank_image, [region], -1, (255, 255, 255), -1)
+    cv2.drawContours(blank_image, [region], -1, (255), -1)#(blank_image, [region], -1, (255, 255, 255), -1)
 
     # Create a mask to select pixels inside the figure
     mask_contour = blank_image == 255
 
     # Calculate the intensity from the grayscale image
     # filtering out the pixels where in the blank_image their value is not 255
-    intensity = np.mean(img[mask_contour])
+    intensity = np.mean(L[mask_contour])
 
     return intensity
 

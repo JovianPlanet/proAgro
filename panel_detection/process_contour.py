@@ -3,7 +3,7 @@ import csv
 from .utils import get_shape, get_intensity
 
 
-def process_contours(n, contours, name='', i_hi=168, nums=[]):
+def process_contours(n, contours, L, name='', i_hi=168, nums=[]):
 
     for contour in contours:
 
@@ -17,7 +17,7 @@ def process_contours(n, contours, name='', i_hi=168, nums=[]):
             epsilon = 0.09 * perimeter
             approx = cv2.approxPolyDP(contour, epsilon, True)
 
-            intensity = get_intensity(n, approx)
+            intensity = get_intensity(L, approx)
 
             shape = get_shape(approx)
 
@@ -26,8 +26,6 @@ def process_contours(n, contours, name='', i_hi=168, nums=[]):
             area_ratio = area / area_box
 
             if shape == 'square' and intensity < i_hi and area_ratio > 0.75: #i_lo < intensity < i_hi and shape == 'square':
-
-                # print(f'La imagen {name} tienen perimetro = {perimeter}, areabox = {area_box}, a ratio = {area_ratio}')
 
                 # with open('areas.csv','a') as fd:
                 #     writer = csv.writer(fd)

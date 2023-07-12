@@ -1,5 +1,7 @@
 import numpy as np
-import cv2
+from .process_img import get_panels
+import tifffile
+
 def get_r(a, cx, cy):
 
     # i = np.indices(a.shape)
@@ -16,25 +18,6 @@ def get_r(a, cx, cy):
     r = np.sqrt(ix + iy)
 
     return r
-
-
-# Funcion para calcular el factor de calibracion F(lambda)
-def get_F(cube):
-
-    F = {'Blue-444'    : [], 'Blue'    : [], 
-         'Green-531'   : [], 'Green'   : [], 
-         'Red-650'     : [], 'Red'     : [], 
-         'Red edge-705': [], 'NIR'     : [], 
-         'Red edge-740': [], 'Red Edge': []
-    }
-
-    for key in cube.keys():
-
-        ro = cube[key][0]
-        mu = cube[key][1]
-        F[key] = ro / mu
-
-    return F
 
 # Funcion para calcular el polinomio viñeta V(x,y)
 def get_V(cube):
@@ -105,8 +88,8 @@ def correct_im(cube, ims):
 
         I[key] = ims[key] - bl
 
-        if '444' in key:
-            print(f'{I[key]}\n')
+        # if '444' in key:
+        #     print(f'{I[key]}\n')
 
     return I
 
@@ -145,13 +128,33 @@ def get_L(metacube, imgcube):
 
         L[key] = (L[key]*a1) / (g*Te*norm)
 
-        if '444' in key:
-            print(f'{a1=}, {Te=}, {g=}, {norm=}') 
-            print(f'{L[key]}\n')
+        # if '444' in key:
+        #     print(f'{a1=}, {Te=}, {g=}, {norm=}') 
+        #     print(f'{L[key]}\n')
 
     return L
 
-def get_R(F, L):
+# Funcion para calcular el factor de calibracion F(lambda)
+def get_F(cube, L):
+
+    F = {'Blue-444'    : [], 'Blue'    : [], 
+         'Green-531'   : [], 'Green'   : [], 
+         'Red-650'     : [], 'Red'     : [], 
+         'Red edge-705': [], 'NIR'     : [], 
+         'Red edge-740': [], 'Red Edge': []
+    }
+
+    for key in cube.keys():
+
+        ro = cube[key][0]
+        
+        I = get_panels(cube[key][2], L[key])
+
+        F[key] = ro / I
+
+    return F
+
+def get_R(L, F, fn):
 
     R = {'Blue-444'    : [], 'Blue'    : [], 
          'Green-531'   : [], 'Green'   : [], 
@@ -160,67 +163,26 @@ def get_R(F, L):
          'Red edge-740': [], 'Red Edge': []
     }
 
+    arrays = []
+
     for key in F.keys():
 
         R[key] = L[key] * F[key]
+
+        arrays.append(R[key])
 
         # cv2.imshow(f'R {key}', R[key])
         # cv2.waitKey(0)
         # cv2.destroyAllWindows()
 
+    stack = np.stack(arrays)
+
+    print(stack.shape)
+
+    tifffile.imsave(fn, stack)
+
     return R
 
-
-#### Metodo 2 ###
-
-def get_In(cube, ims):
-
-    In = {'Blue-444'    : [], 'Blue'    : [], 
-         'Green-531'   : [], 'Green'   : [], 
-         'Red-650'     : [], 'Red'     : [], 
-         'Red edge-705': [], 'NIR'     : [], 
-         'Red edge-740': [], 'Red Edge': []
-    }
-
-    for key in In.keys():
-
-        norm = cube[key][1]['Norm']
-        bl = cube[key][1]['BL']
-
-        ro_bl = bl / norm
-
-        ro = ims[key] / norm
-
-        In[key] = ro - ro_bl
-
-    return In
-
-def get_L2(cube, V, Rv, Pn):
-
-    L2 = {'Blue-444'    : [], 'Blue'    : [], 
-         'Green-531'   : [], 'Green'   : [], 
-         'Red-650'     : [], 'Red'     : [], 
-         'Red edge-705': [], 'NIR'     : [], 
-         'Red edge-740': [], 'Red Edge': []
-    }
-
-    for key in L2.keys():
-
-        a1, _, _ = cube[key][1]['RadioCal']
-        g = cube[key][1]['Gain']
-        Te = cube[key][1]['Te']
-        # print(f'{a1}, {type(g)}, {float(a1)}, {type(Te)}')
-
-        k = float(a1) / (g*Te)
-
-        num = (V[key]*k*Pn[key]).T*Rv[key]
-
-        # print(f'{num.shape=}, {np.min(num)=}, {np.max(num)=}, {num.dtype}\n')
-
-        # if '444' in key:
-        #     print(f'{num}')
-
-    return L2
 
 
 
