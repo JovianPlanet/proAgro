@@ -5,11 +5,12 @@ import micasense.metadata as metadata
 import exiftool
 
 from PyQt5 import QtWidgets, QtCore
-#from popups import ErrorDialog
 import GUI
 
 from panel_detection.utils import get_params, get_ImArray
 from panel_detection.calculations import get_F, get_L, get_R
+
+from popup import FinishedDialog
 
 
 class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
@@ -23,6 +24,18 @@ class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
 
         self.browse_blueimg_button.setEnabled(False)
         self.browse_redimg_button.setEnabled(False)
+
+        # Set widget stylesheets
+        #self.compute_button.setStyleSheet("border-radius: 5px; border: 3px solid darkgray; border-style: outset;")
+
+        self.lineEdit_bluepanel.setStyleSheet("border-radius: 3px; border: 1px solid blue;")
+        self.lineEdit_blueimg.setStyleSheet("border-radius: 3px; border: 1px solid blue;")
+
+        self.lineEdit_redpanel.setStyleSheet("border-radius: 3px; border: 1px solid red;")
+        self.lineEdit_redimg.setStyleSheet("border-radius: 3px; border: 1px solid red;")
+        self.blue_label.setStyleSheet("color: darkblue;")
+        self.red_label.setStyleSheet("color: darkred;")
+        
 
         # Conexiones
         self.browse_bluepanel_button.clicked.connect(self.get_panel_blue)
@@ -161,7 +174,8 @@ class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
         fn = 'IMG_B' + self.blue_stack + '_R' + self.red_stack + '.tif'
 
         # Radiancia espectral por longitud de onda de los paneles
-        Lp_lambda = get_L(self.panel_cube, self.Pans) # V_lambda, Rv_lambda, Pc_lambda)
+        Lp_lambda = get_L(self.panel_cube, self.Pans) 
+
         # Radiancia espectral por longitud de onda de las imagenes
         Li_lambda = get_L(self.img_cube, self.Ims)
 
@@ -172,7 +186,22 @@ class GuiConnections(QtWidgets.QMainWindow, GUI.Ui_Form):
         # Rp_lambda = get_R(Lp_lambda, Fp_lambda)
         Ri_lambda = get_R(Li_lambda, Fp_lambda, fn)
 
+        if Ri_lambda:
+            self.show_message('El archivo TIFF fue creado exitosamente.', False)
+        else:
+            self.show_message('No fue posible crear el archivo TIFF. Intente de nuevo.', False)
+
         return
+
+
+    # Función para desplegar mensaje en ventana emergente
+    def show_message(self, s, rem):
+        print("click", s)
+
+        dlg = FinishedDialog(self)
+        dlg.message.setText(s)
+        if dlg.exec():
+            print("Ok!")
 
 
 

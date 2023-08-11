@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>453</width>
-    <height>611</height>
+    <width>471</width>
+    <height>609</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,8 +18,8 @@
     <rect>
      <x>9</x>
      <y>9</y>
-     <width>431</width>
-     <height>583</height>
+     <width>451</width>
+     <height>581</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -39,13 +39,22 @@
 para Cámara
 MicaSense Dualsystem</string>
         </property>
+        <property name="scaledContents">
+         <bool>false</bool>
+        </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
+        </property>
+        <property name="margin">
+         <number>5</number>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QLabel" name="label_3">
+        <property name="frameShadow">
+         <enum>QFrame::Plain</enum>
+        </property>
         <property name="text">
          <string/>
         </property>
@@ -92,6 +101,12 @@ MicaSense Dualsystem</string>
           <property name="inputMask">
            <string/>
           </property>
+          <property name="text">
+           <string extracomment="dkdsafjdf"/>
+          </property>
+          <property name="placeholderText">
+           <string>Ingrese la ruta de panel BLUE...</string>
+          </property>
          </widget>
         </item>
         <item>
@@ -122,7 +137,11 @@ MicaSense Dualsystem</string>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_5">
         <item>
-         <widget class="QLineEdit" name="lineEdit_blueimg"/>
+         <widget class="QLineEdit" name="lineEdit_blueimg">
+          <property name="placeholderText">
+           <string>Ingrese la ruta de la imagen BLUE...</string>
+          </property>
+         </widget>
         </item>
         <item>
          <widget class="QPushButton" name="browse_blueimg_button">
@@ -200,7 +219,7 @@ MicaSense Dualsystem</string>
          </palette>
         </property>
         <property name="text">
-         <string>Ok</string>
+         <string/>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -238,28 +257,15 @@ MicaSense Dualsystem</string>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <spacer name="horizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::Fixed</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>5</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
          <widget class="QLineEdit" name="lineEdit_redpanel">
           <property name="text">
            <string extracomment="Introduzca ruta de panel Red"/>
           </property>
           <property name="maxLength">
            <number>32767</number>
+          </property>
+          <property name="placeholderText">
+           <string>Ingrese la ruta del panel RED...</string>
           </property>
          </widget>
         </item>
@@ -269,22 +275,6 @@ MicaSense Dualsystem</string>
            <string>Panel</string>
           </property>
          </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_2">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::Fixed</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
         </item>
        </layout>
       </item>
@@ -297,28 +287,15 @@ MicaSense Dualsystem</string>
          <number>0</number>
         </property>
         <item>
-         <spacer name="horizontalSpacer_5">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::Fixed</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>5</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
          <widget class="QLineEdit" name="lineEdit_redimg">
           <property name="inputMask">
            <string extracomment="Introduzca ruta de imagen Red"/>
           </property>
           <property name="text">
            <string extracomment="Introduzca ruta de imagen Red"/>
+          </property>
+          <property name="placeholderText">
+           <string>Ingrese la ruta de la imagen RED...</string>
           </property>
          </widget>
         </item>
@@ -329,28 +306,12 @@ MicaSense Dualsystem</string>
           </property>
          </widget>
         </item>
-        <item>
-         <spacer name="horizontalSpacer_6">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::Fixed</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
        </layout>
       </item>
       <item>
        <widget class="QLabel" name="redok_label">
         <property name="text">
-         <string>Ok</string>
+         <string/>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -365,44 +326,6 @@ MicaSense Dualsystem</string>
        <enum>Qt::Horizontal</enum>
       </property>
      </widget>
-    </item>
-    <item>
-     <layout class="QGridLayout" name="gridLayout">
-      <item row="1" column="1" alignment="Qt::AlignHCenter">
-       <widget class="QCheckBox" name="manual_cb">
-        <property name="layoutDirection">
-         <enum>Qt::LeftToRight</enum>
-        </property>
-        <property name="text">
-         <string>Manual</string>
-        </property>
-        <property name="tristate">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0" alignment="Qt::AlignHCenter">
-       <widget class="QCheckBox" name="plot_cntr_cb">
-        <property name="text">
-         <string>Graficar contorno</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0" alignment="Qt::AlignHCenter">
-       <widget class="QCheckBox" name="auto_cb">
-        <property name="text">
-         <string>Automático</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1" alignment="Qt::AlignHCenter">
-       <widget class="QCheckBox" name="checkBox_2">
-        <property name="text">
-         <string>CheckBox</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
     </item>
     <item>
      <widget class="Line" name="line">
@@ -424,7 +347,7 @@ MicaSense Dualsystem</string>
         <property name="sizeHint" stdset="0">
          <size>
           <width>20</width>
-          <height>40</height>
+          <height>20</height>
          </size>
         </property>
        </spacer>
@@ -449,8 +372,20 @@ MicaSense Dualsystem</string>
         </item>
         <item>
          <widget class="QPushButton" name="compute_button">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>50</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
           <property name="text">
-           <string>Calcular</string>
+           <string>Generar
+TIFF</string>
           </property>
          </widget>
         </item>
@@ -483,7 +418,7 @@ MicaSense Dualsystem</string>
         <property name="sizeHint" stdset="0">
          <size>
           <width>20</width>
-          <height>40</height>
+          <height>20</height>
          </size>
         </property>
        </spacer>

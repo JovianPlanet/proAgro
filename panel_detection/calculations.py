@@ -179,9 +179,12 @@ def get_R(L, F, fn):
 
     print(stack.shape)
 
-    tifffile.imsave(fn, stack)
-
-    return R
+    try:
+        tifffile.imwrite(fn, stack)
+    except:
+        return False
+        
+    return True
 
 
 
